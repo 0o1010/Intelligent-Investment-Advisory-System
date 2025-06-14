@@ -236,10 +236,9 @@ export default {
                     this.loading = true;
                     this.$axios.post(this.$httpUrl + '/register', this.registerForm)
                         .then(res => {
-                            console.log(res.data)
                             if (res.data.code === 200) {
                                 this.$message.success('Register successfully');
-                                sessionStorage.setItem('user', res.data)
+                                sessionStorage.setItem('user', res.data.data)
                                 this.$router.replace('/index')
                             } else {
                                 this.$message.error(res.data.msg);
