@@ -3,6 +3,7 @@ import random
 from fastapi import APIRouter, Depends
 import openai
 from sqlalchemy.orm import Session
+from sqlalchemy import and_
 from app.db.db_session import get_db
 from app.models.conversation import Conversation
 from app.models.user import User
@@ -127,17 +128,22 @@ def generate_user_profile_summary(username: str, db: Session = Depends(get_db)):
                }
     return summary
 
-def generate_user_prompt(username: str, db: Session=Depends(get_db)):
+
+def generate_user_prompt(username: str, db: Session = Depends(get_db)):
     prompt = financial_prompt + generate_user_profile_summary(username, db)['information']
 
     return prompt
 
+
 @router.get('/load')
-async def load_history_conversation(username: str, db: Session = Depends(get_db)):
-    conversations = db.query(Conversation).filter(Conversation.username == username).all()
+async def load_history_conversation(username: str, model: str, db: Session = Depends(get_db)):
+    conversations = db.query(Conversation).filter(
+        and_(Conversation.username == username, Conversation.model == model)).all()
     history = []
     for i in range(len(conversations)):
-        history.append({'user': conversations[i].user_input, 'assistant': conversations[i].output})
+        history.append({'user': conversations[i].user_input, 'assistant': conversations[i].output,
+                        'model': conversations[i].model})
+    print(history)
     return resp_200(data=history)
 
 
@@ -162,7 +168,8 @@ async def suggest(model: str, message: str, username: str, db: Session = Depends
     db_conversation = Conversation(
         username=username,
         user_input=message,
-        output=output
+        output=output,
+        model=model
     )
     db.add(db_conversation)
     db.commit()

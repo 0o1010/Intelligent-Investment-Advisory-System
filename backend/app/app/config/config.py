@@ -13,7 +13,4 @@ class Settings(BaseSettings):
     BACKEND_CORS_ORIGINS: List[str] = ['*']
 
 
-
-
 settings = Settings()
-

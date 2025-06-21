@@ -8,6 +8,8 @@ class User(Base):
     id = Column(Integer, primary_key=True, index=True)
     username = Column(String, unique=True, index=True)
     password = Column(String)
+    # age = Column(Integer, default=0)
+
     financial_status = Column(Integer, default=0)
     assets_percentage = Column(Integer, default=0)
     annual_income = Column(Integer, default=0)

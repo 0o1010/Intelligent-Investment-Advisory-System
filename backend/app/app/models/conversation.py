@@ -9,5 +9,5 @@ class Conversation(Base):
     username = Column(String, index=True)
     user_input = Column(String)
     output = Column(String)
-    # model=Column(String)
+    model = Column(String)
     # ask_date = Column()

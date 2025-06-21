@@ -3,7 +3,7 @@
         <div style="margin-bottom: 5px">
 
             <el-select v-model="model" filterable placeholder="Select a model" class="model-select"
-                       style="margin-left: 5px; margin-bottom: 10px">
+                       style="margin-left: 5px; margin-bottom: 10px" @change="onModelChange">
                 <el-option
                     v-for="item in models"
                     :key="item.value"
@@ -18,7 +18,8 @@
                         :key="index"
                         :class="['chat-message', msg.role]"
                     >
-                        <p><strong>{{ msg.role === 'user' ? 'You' : 'Assistant' }}:</strong></p>
+                        <p><strong>{{ msg.role === 'user' ? 'You' : 'Assistant (' + model + ')' }}:</strong>
+                        </p>
 
                         <template v-if="msg.role === 'assistant'">
                             <div v-if="extractThink(msg.text)">
@@ -45,10 +46,8 @@
                             <div class="markdown-body" v-html="marked(stripThink(msg.text))"/>
                         </template>
 
-
                         <p v-else>{{ msg.text }}</p>
                     </div>
-
 
                 </div>
 
@@ -86,31 +85,30 @@ export default {
             model: '',
             models: [
                 {
-                    value: '',
-                    label: ''
-                }, {
                     value: 'Meta-Llama-3.1-405B-Instruct',
                     label: 'Meta-Llama-3.1-405B-Instruct'
                 }, {
-                    value: 'DeepSeek-R1-0528',
-                    label: 'DeepSeek-R1-0528'
-                }, {
                     value: 'Qwen3-32B',
                     label: 'Qwen3-32B'
+                }, {
+                    value: 'DeepSeek-R1-0528',
+                    label: 'DeepSeek-R1-0528'
                 },
             ]
         }
     },
+
     methods: {
         marked,
         loadGet() {
             this.$nextTick(this.scrollToBottom);
             this.$axios.get(this.$httpUrl + '/load', {
                 params: {
-                    username: sessionStorage.getItem('user')
+                    username: sessionStorage.getItem('user'),
+                    model: this.model
                 }
             }).then(res => res.data).then(res => {
-                this.messages.pop();
+                this.messages = [];
                 console.log(res)
                 if (res.code === 200) {
                     console.log(res.data)
@@ -176,11 +174,13 @@ export default {
         stripThink(text) {
             return text.replace(/<think>[\s\S]*?<\/think>/g, '').trim();
         },
-
+        onModelChange() {
+            this.messages = [];
+            setTimeout(() => {
+                this.loadGet();
+            }, 100);
+        }
     },
-    beforeMount() {
-        this.loadGet()
-    }
 }
 </script>
 
