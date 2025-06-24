@@ -1,11 +1,23 @@
-from fastapi import APIRouter
+from fastapi import APIRouter, Depends
 import pandas as pd
+from sqlalchemy.orm import Session
 import yfinance as yf
 from app.core.response import resp_200, resp_401
 from app.nn.gru import test_gru_three_model
 from app.nn.lstm import test_lstm_two_model
+from app.db.db_session import get_db
+from app.models.etf import ETF
 
 router = APIRouter()
+
+
+@router.get("/getAllETF")
+def get_all_etf(db: Session = Depends(get_db)):
+    data = db.query(ETF).filter().all()
+    etfs = []
+    for i in range(len(data)):
+        etfs.append({'value': data[i].value, 'label': f"{data[i].value} - {data[i].label}"})
+    return resp_200(data=etfs)
 
 
 def get_data(code: str, start_date: str, end_date: str):

@@ -9,14 +9,25 @@
                     :value="item.value">
                 </el-option>
             </el-select>
-            <el-select v-model="code" filterable placeholder="Choose an ETF" style="margin-left: 5px">
+            <el-select
+                v-model="code"
+                filterable
+                clearable
+                placeholder="Choose an ETF"
+                style="margin-left: 5px"
+                :loading="loadingCodes"
+                :loading-text="'Loading...'"
+                :no-match-text="'No matching ETF'"
+                @visible-change="handleDropdownVisible"
+            >
                 <el-option
                     v-for="item in codes"
                     :key="item.value"
                     :label="item.label"
-                    :value="item.value">
-                </el-option>
+                    :value="item.value"
+                />
             </el-select>
+
 
             <el-date-picker
                 style="margin-left: 5px"
@@ -81,21 +92,8 @@ export default {
                 }
             ],
             code: '',
-            codes: [
-                {
-                    value: 'QQQ',
-                    label: 'QQQ'
-                }, {
-                    value: 'EEM',
-                    label: 'EEM'
-                }, {
-                    value: 'SPY',
-                    label: 'SPY'
-                }, {
-                    value: 'GLD',
-                    label: 'GLD'
-                },
-            ],
+            loadingCodes: false,
+            codes: [],
             pickerOptions: {
                 disabledDate(time) {
                     return time.getTime() > Date.now();
@@ -195,6 +193,37 @@ export default {
                 this.searchDate = '';
             }
         },
+        fetchETFList() {
+            this.loadingCodes = true;
+            this.$axios.get(this.$httpUrl + '/getAllETF')
+                .then(res => res.data)
+                .then(res => {
+                    if (res.code === 200) {
+                        this.codes = res.data;
+                        this.searchQuery = res.data;
+                    } else {
+                        this.$message.error("Failed to load ETF list.");
+                    }
+                })
+                .catch(() => {
+                    this.$message.error("Error while fetching ETF list.");
+                })
+                .finally(() => {
+                    this.loadingCodes = false;
+                });
+        },
+        debounce(func, wait) {
+            let timeout;
+            return (...args) => {
+                clearTimeout(timeout);
+                timeout = setTimeout(() => func.apply(this, args), wait);
+            };
+        },
+        handleDropdownVisible(val) {
+            if (val) {
+                this.searchQuery = this.codes;
+            }
+        },
 
         loadGet() {
             if (!this.code || !this.searchDate || this.searchDate.length < 2) {
@@ -284,7 +313,12 @@ export default {
         }
 
     },
+    created() {
+        this.filterETF = this.debounce(this.filterETF, 200);
+    },
+
     mounted() {
+        this.fetchETFList()
         this.loadGet();
     },
     beforeMount() {
