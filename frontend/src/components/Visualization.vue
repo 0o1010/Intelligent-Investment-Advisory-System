@@ -200,7 +200,6 @@ export default {
                 .then(res => {
                     if (res.code === 200) {
                         this.codes = res.data;
-                        this.searchQuery = res.data;
                     } else {
                         this.$message.error("Failed to load ETF list.");
                     }
@@ -212,19 +211,6 @@ export default {
                     this.loadingCodes = false;
                 });
         },
-        debounce(func, wait) {
-            let timeout;
-            return (...args) => {
-                clearTimeout(timeout);
-                timeout = setTimeout(() => func.apply(this, args), wait);
-            };
-        },
-        handleDropdownVisible(val) {
-            if (val) {
-                this.searchQuery = this.codes;
-            }
-        },
-
         loadGet() {
             if (!this.code || !this.searchDate || this.searchDate.length < 2) {
                 this.chartOption = this.emptyChartOption;
@@ -313,10 +299,6 @@ export default {
         }
 
     },
-    created() {
-        this.filterETF = this.debounce(this.filterETF, 200);
-    },
-
     mounted() {
         this.fetchETFList()
         this.loadGet();
