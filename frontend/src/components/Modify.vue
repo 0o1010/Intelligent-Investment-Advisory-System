@@ -11,7 +11,8 @@
                     />
 
                 </el-form-item>
-                <el-form-item label="1. Your age falls into which of the following categories?" prop="age">
+                <el-form-item prop="age">
+                    <div class="form-question">1. Your age falls into which of the following categories?</div>
                     <el-radio-group v-model="registerForm.age">
                         <el-radio label="0">A. Below 25</el-radio>
                         <el-radio label="1">B. 25–35</el-radio>
@@ -21,7 +22,8 @@
                     </el-radio-group>
                 </el-form-item>
 
-                <el-form-item label="2. What is your current family status?" prop="family_status">
+                <el-form-item prop="family_status">
+                    <div class="form-question">2. What is your current family status?</div>
                     <el-radio-group v-model="registerForm.family_status">
                         <el-radio label="0">A. Single</el-radio>
                         <el-radio label="1">B. Married without children</el-radio>
@@ -31,8 +33,8 @@
                     </el-radio-group>
                 </el-form-item>
 
-                <el-form-item label="3. What is your household’s annual after-tax income?"
-                              prop="annual_income_household">
+                <el-form-item prop="annual_income_household">
+                    <div class="form-question">3. What is your household’s annual after-tax income?</div>
                     <el-radio-group v-model="registerForm.annual_income_household">
                         <el-radio label="0">A. Below ¥200,000</el-radio>
                         <el-radio label="1">B. ¥200,000 – ¥500,000</el-radio>
@@ -42,8 +44,8 @@
                     </el-radio-group>
                 </el-form-item>
 
-                <el-form-item label="4. How much disposable income do you have for investment each year?"
-                              prop="annual_disposable_surplus">
+                <el-form-item prop="annual_disposable_surplus">
+                    <div class="form-question">4. How much disposable income do you have for investment each year?</div>
                     <el-radio-group v-model="registerForm.annual_disposable_surplus">
                         <el-radio label="0">A. Below ¥50,000</el-radio>
                         <el-radio label="1">B. ¥50,000 – ¥150,000</el-radio>
@@ -53,7 +55,8 @@
                     </el-radio-group>
                 </el-form-item>
 
-                <el-form-item label="5. What is the estimated value of your total assets?" prop="total_assets">
+                <el-form-item prop="total_assets">
+                    <div class="form-question">5. What is the estimated value of your total assets?</div>
                     <el-radio-group v-model="registerForm.total_assets">
                         <el-radio label="0">A. Below ¥500,000</el-radio>
                         <el-radio label="1">B. ¥500,000 – ¥1,000,000</el-radio>
@@ -63,8 +66,10 @@
                     </el-radio-group>
                 </el-form-item>
 
-                <el-form-item label="6. Which of the following assets are part of your current financial portfolio?"
-                              prop="existing_financial_portfolio">
+                <el-form-item prop="existing_financial_portfolio">
+                    <div class="form-question">6. Which of the following assets are part of your current financial
+                        portfolio?
+                    </div>
                     <el-checkbox-group
                         v-model="registerForm.existing_financial_portfolio"
                         @change="handleAssetChange">
@@ -85,7 +90,8 @@
                 </el-form-item>
 
 
-                <el-form-item label="7. What is your current debt status?" prop="liabilities">
+                <el-form-item prop="liabilities">
+                    <div class="form-question">7. What is your current debt status?</div>
                     <el-radio-group v-model="registerForm.liabilities">
                         <el-radio label="0">A. No liabilities</el-radio>
                         <el-radio label="1">B. Minor debts</el-radio>
@@ -95,8 +101,10 @@
                     </el-radio-group>
                 </el-form-item>
 
-                <el-form-item label="8. Do you have emergency savings equivalent to 6–12 months of living expenses?"
-                              prop="emergency_fund">
+                <el-form-item prop="emergency_fund">
+                    <div class="form-question">8. Do you have emergency savings equivalent to 6–12 months of living
+                        expenses?
+                    </div>
                     <el-radio-group v-model="registerForm.emergency_fund">
                         <el-radio label="0">A. None</el-radio>
                         <el-radio label="1">B. Less than 3 months</el-radio>
@@ -106,8 +114,8 @@
                     </el-radio-group>
                 </el-form-item>
 
-                <el-form-item label="9. How would you describe your investment experience?"
-                              prop="investment_experience">
+                <el-form-item prop="investment_experience">
+                    <div class="form-question">9. How would you describe your investment experience?</div>
                     <el-radio-group v-model="registerForm.investment_experience">
                         <el-radio label="0">A. None</el-radio>
                         <el-radio label="1">B. Basic</el-radio>
@@ -117,7 +125,8 @@
                     </el-radio-group>
                 </el-form-item>
 
-                <el-form-item label="10. What is your intended investment horizon?" prop="investment_period">
+                <el-form-item prop="investment_period">
+                    <div class="form-question">10. What is your intended investment horizon?</div>
                     <el-radio-group v-model="registerForm.investment_period">
                         <el-radio label="0">A. Less than 1 year</el-radio>
                         <el-radio label="1">B. 1–3 years</el-radio>
@@ -127,7 +136,8 @@
                     </el-radio-group>
                 </el-form-item>
 
-                <el-form-item label="11. What are your primary investment goals?" prop="investment_goals">
+                <el-form-item prop="investment_goals">
+                    <div class="form-question">11. What are your primary investment goals?</div>
                     <el-checkbox-group v-model="registerForm.investment_goals">
                         <el-checkbox label="A">A. Capital preservation</el-checkbox>
                         <el-checkbox label="B">B. Wealth accumulation</el-checkbox>
@@ -137,8 +147,8 @@
                     </el-checkbox-group>
                 </el-form-item>
 
-                <el-form-item label="12. How would you describe your attitude toward investment risk?"
-                              prop="risk_tolerance_attitude">
+                <el-form-item prop="risk_tolerance_attitude">
+                    <div class="form-question">12. How would you describe your attitude toward investment risk?</div>
                     <el-radio-group v-model="registerForm.risk_tolerance_attitude">
                         <el-radio label="0">A. Very conservative</el-radio>
                         <el-radio label="1">B. Conservative</el-radio>
@@ -148,7 +158,8 @@
                     </el-radio-group>
                 </el-form-item>
 
-                <el-form-item label="13. What is your expected annual return range?" prop="expected_return_range">
+                <el-form-item prop="expected_return_range">
+                    <div class="form-question">13. What is your expected annual return range?</div>
                     <el-radio-group v-model="registerForm.expected_return_range">
                         <el-radio label="0">A. Less than 4%</el-radio>
                         <el-radio label="1">B. 4% – 6%</el-radio>
@@ -158,8 +169,8 @@
                     </el-radio-group>
                 </el-form-item>
 
-                <el-form-item label="14. What level of loss can you tolerate in a single year?"
-                              prop="max_drawdown_tolerance">
+                <el-form-item prop="max_drawdown_tolerance">
+                    <div class="form-question">14. What level of loss can you tolerate in a single year?</div>
                     <el-radio-group v-model="registerForm.max_drawdown_tolerance">
                         <el-radio label="0">A. Less than 5%</el-radio>
                         <el-radio label="1">B. 5% – 10%</el-radio>
@@ -169,8 +180,8 @@
                     </el-radio-group>
                 </el-form-item>
 
-                <el-form-item label="15. Do you have any preferences or restrictions regarding investment instruments?"
-                              prop="investment_preference_restrictions">
+                <el-form-item prop="investment_preference_restrictions">
+                    <div class="form-question">15. Do you have any preferences or restrictions regarding investment instruments?</div>
                     <el-checkbox-group v-model="registerForm.investment_preference_restrictions">
                         <el-checkbox label="A">A. Prefer ETFs as core allocation</el-checkbox>
                         <el-checkbox label="B">B. Avoid crypto/P2P/high risk</el-checkbox>
@@ -180,8 +191,8 @@
                     </el-checkbox-group>
                 </el-form-item>
 
-                <el-form-item label="16. Do you expect any major spending in the next 1–2 years?"
-                              prop="liquidity_needs_short_term">
+                <el-form-item prop="liquidity_needs_short_term">
+                    <div class="form-question">16. Do you expect any major spending in the next 1–2 years?</div>
                     <el-radio-group v-model="registerForm.liquidity_needs_short_term">
                         <el-radio label="0">A. No</el-radio>
                         <el-radio label="1">B. Yes, within ¥100,000</el-radio>
@@ -223,6 +234,7 @@ export default {
                 liquidity_needs_short_term: '',
             },
             existingFinancialOther: "",
+            other: '',
         };
     },
     beforeMount() {
@@ -243,10 +255,11 @@ export default {
                 if (index !== -1) {
                     val.splice(index, 1);
                 }
-                if (!val.includes('F')) {
+                if (val.includes('F')) {
+                    this.existingFinancialOther = this.other;
+                } else {
                     this.existingFinancialOther = '';
                 }
-
                 this.registerForm.existing_financial_portfolio = [...val];
             }
         },
@@ -264,6 +277,7 @@ export default {
                             : String(data[key]);
                     });
                     this.existingFinancialOther = String(res.data.financial_other)
+                    this.other = String(res.data.financial_other)
                 }
             });
         },
@@ -311,6 +325,14 @@ export default {
     margin-bottom: 30px;
     color: #222;
     text-align: center;
+}
+
+.form-question {
+    font-weight: 500;
+    color: #333;
+    margin-bottom: 8px;
+    font-size: 16px;
+    line-height: 1.6;
 }
 
 .el-form-item {
