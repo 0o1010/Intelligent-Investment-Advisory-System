@@ -85,8 +85,8 @@ export default {
             model: '',
             models: [
                 {
-                    value: 'Meta-Llama-3.1-405B-Instruct',
-                    label: 'Meta-Llama-3.1-405B-Instruct'
+                    value: 'Meta-Llama-3.3-70B-Instruct',
+                    label: 'Meta-Llama-3.3-70B-Instruct'
                 }, {
                     value: 'Qwen3-32B',
                     label: 'Qwen3-32B'

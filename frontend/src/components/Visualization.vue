@@ -18,7 +18,6 @@
                 :loading="loadingCodes"
                 :loading-text="'Loading...'"
                 :no-match-text="'No matching ETF'"
-                @visible-change="handleDropdownVisible"
             >
                 <el-option
                     v-for="item in codes"

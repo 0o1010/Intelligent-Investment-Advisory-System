@@ -1,9 +1,3 @@
-# -*- coding: utf-8 -*-
-# @Time    : 2023/3/22 21:33
-# @Author  : 陈旭燃
-# @File    : response.py
-# @Description : 相应状态码
-
 from fastapi import status
 from fastapi.responses import JSONResponse, Response
 from typing import Union

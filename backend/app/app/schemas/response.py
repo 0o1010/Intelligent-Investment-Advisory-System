@@ -1,8 +1,3 @@
-# -*- coding: utf-8 -*-
-# @Time    : 2023/4/11 16:09
-# @Author  : 陈旭燃
-# @File    : response.py
-# @Description :
 from typing import Optional, Any
 
 from pydantic import BaseModel

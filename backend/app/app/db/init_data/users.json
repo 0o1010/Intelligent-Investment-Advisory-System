@@ -1,0 +1,24 @@
+[
+  {
+    "id": 1,
+    "username": "demo",
+    "password": "123456",
+    "age": 0,
+    "family_status": 0,
+    "annual_income_household": 0,
+    "annual_disposable_surplus": 0,
+    "total_assets": 0,
+    "existing_financial_portfolio": "[\"B\", \"F\", \"C\"]",
+    "liabilities": 0,
+    "emergency_fund": 0,
+    "investment_experience": 0,
+    "investment_period": 0,
+    "investment_goals": "[\"A\"]",
+    "risk_tolerance_attitude": 0,
+    "expected_return_range": 0,
+    "max_drawdown_tolerance": 0,
+    "investment_preference_restrictions": "[\"A\", \"C\"]",
+    "liquidity_needs_short_term": 0,
+    "financial_other": "cash"
+  }
+]

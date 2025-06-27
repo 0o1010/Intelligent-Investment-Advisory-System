@@ -6,5 +6,5 @@ class ETF(Base):
     __tablename__ = "etf"
 
     id = Column(Integer, primary_key=True, index=True)
-    value = Column(String, index=True)
+    value = Column(String, index=True, unique=True)
     label = Column(String)

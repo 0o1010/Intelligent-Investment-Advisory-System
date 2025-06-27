@@ -1,5 +1,5 @@
 from fastapi import FastAPI
-import logging
+import json
 from app.config import settings
 from app.api.api_v1.api import router
 from starlette.middleware.cors import CORSMiddleware
@@ -9,9 +9,17 @@ import csv
 from sqlalchemy.orm import Session
 from app.db.db_session import SessionLocal
 from app.models.etf import ETF
+from app.models.user import User
+from app.models.conversation import Conversation
+
+db_initialized = False
 
 
 def register_database(app: FastAPI):
+    global db_initialized
+    if db_initialized:
+        return
+    db_initialized = True
     models.Base.metadata.create_all(bind=engine)
     db: Session = SessionLocal()
     with open("../app/db/init_data/etf_list.csv", newline='') as csvfile:
@@ -19,8 +27,22 @@ def register_database(app: FastAPI):
         for row in reader:
             if not db.query(ETF).filter_by(value=row['value']).first():
                 db.add(ETF(value=row['value'], label=row['label']))
+    with open("../app/db/init_data/users.json", 'r', encoding='utf-8') as f:
+        users = json.load(f)
+        for u in users:
+            if not db.query(User).filter_by(username=u['username']).first():
+                user = User(**u)
+                db.add(user)
         db.commit()
-        db.close()
+    with open("../app/db/init_data/conversations.json", 'r', encoding='utf-8') as f:
+        conversations = json.load(f)
+        for c in conversations:
+            user = db.query(User).filter_by(username=c['username']).first()
+            existing = db.query(Conversation).filter_by(id=c['id']).first()
+            if not existing and user:
+                db.add(Conversation(**c))
+    db.commit()
+    db.close()
 
 
 def register_router(app: FastAPI):
