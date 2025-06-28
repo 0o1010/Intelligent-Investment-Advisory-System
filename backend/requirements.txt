@@ -9,3 +9,4 @@ starlette==0.38.2
 tensorflow==2.15.0
 uvicorn==0.34.2
 yfinance==0.2.61
+scikit-learn==1.7.0
