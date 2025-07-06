@@ -3,7 +3,7 @@ import Login from "@/pages/Login";
 import Index from "@/components/Index";
 import Visualization from "@/components/Visualization";
 import LLM from "@/components/LLM";
-import Suggestion from "@/components/Suggestion";
+import Portfolio from "@/components/Portfolio";
 import Modify from "@/components/Modify";
 
 export default new VueRouter({
@@ -53,11 +53,11 @@ export default new VueRouter({
                     component: LLM
                 },
                 {
-                    path: '/suggestion',
+                    path: '/portfolio',
                     meta: {
-                        title: 'Suggestion'
+                        title: 'Portfolio'
                     },
-                    component: Suggestion
+                    component: Portfolio
                 },
                 {
                     path: '/modify',

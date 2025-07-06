@@ -10,9 +10,9 @@
             <i class="el-icon-cpu"></i>
             <span slot="title">LLM</span>
         </el-menu-item>
-        <el-menu-item index="/suggestion">
+        <el-menu-item index="/portfolio">
             <i class="el-icon-document"></i>
-            <span slot="title">Suggestion</span>
+            <span slot="title">Portfolio</span>
         </el-menu-item>
         <el-menu-item index="/modify">
             <i class="el-icon-edit"></i>

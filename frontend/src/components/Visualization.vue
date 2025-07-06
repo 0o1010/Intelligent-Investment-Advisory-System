@@ -13,6 +13,7 @@
                 v-model="code"
                 filterable
                 clearable
+                class="etf-select"
                 placeholder="Choose an ETF"
                 style="margin-left: 5px"
                 :loading="loadingCodes"
@@ -187,8 +188,8 @@ export default {
             const [start, end] = dates.map(date => new Date(date));
             const diffInDays = (end - start) / (1000 * 3600 * 24);
 
-            if (diffInDays < 90) {
-                this.$message.warning('Please select a date range of at least 90 days.');
+            if (diffInDays < 180) {
+                this.$message.warning('Please select a date range of at least 180 days.');
                 this.searchDate = '';
             }
         },
@@ -309,5 +310,8 @@ export default {
 </script>
 
 <style scoped>
-
+.etf-select {
+    width: 220px;
+    margin-right: 10px;
+}
 </style>
