@@ -1,7 +1,7 @@
 <template>
     <div>
         <div style="margin-bottom: 5px">
-            <el-select v-model="model" filterable placeholder="Select a NN model" style="margin-left: 5px">
+            <el-select v-model="model" filterable clearable placeholder="Select a NN model" style="margin-left: 5px">
                 <el-option
                     v-for="item in models"
                     :key="item.value"
@@ -19,6 +19,7 @@
                 :loading="loadingCodes"
                 :loading-text="'Loading...'"
                 :no-match-text="'No matching ETF'"
+                :no-data-text="'No ETF data'"
             >
                 <el-option
                     v-for="item in codes"
@@ -142,6 +143,11 @@ export default {
                         type: "cross",
                     },
                 },
+                legend: {
+                    data: ["Actual Close", "Predicted"],
+                    top: 50,
+                    left: "center"
+                },
                 xAxis: {
                     type: "category",
                     data: [],
@@ -157,18 +163,25 @@ export default {
                     left: "10%",
                     right: "10%",
                     bottom: "15%",
+                    top: 90
                 },
                 series: [
                     {
-                        name: "Close price",
+                        name: "Actual Close",
                         type: "line",
                         data: [],
                         smooth: true,
                         showSymbol: false,
-                        lineStyle: {
-                            width: 2,
-                        },
+                        lineStyle: {width: 2},
                     },
+                    {
+                        name: "Predicted",
+                        type: "line",
+                        data: [],
+                        smooth: true,
+                        showSymbol: false,
+                        lineStyle: {width: 2},
+                    }
                 ],
             },
             chartOption: {},
@@ -180,7 +193,7 @@ export default {
             this.code = ''
             this.model = ''
             this.searchDate = ''
-            this.chartOption = this.emptyChartOption
+            this.chartOption = JSON.parse(JSON.stringify(this.emptyChartOption))
         },
         validateDateRange(dates) {
             if (!dates || dates.length !== 2) return;
