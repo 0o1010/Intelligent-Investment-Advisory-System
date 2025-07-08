@@ -25,12 +25,12 @@
                     <span style="color: #999; float: right;">{{ item.label }}</span>
                 </el-option>
             </el-select>
-<!--            <el-switch-->
-<!--                v-model="rolling"-->
-<!--                active-text="Rolling Backtest"-->
-<!--                inactive-text="Buy & Hold"-->
-<!--                style="margin-left: 10px;"-->
-<!--            ></el-switch>-->
+            <!--            <el-switch-->
+            <!--                v-model="rolling"-->
+            <!--                active-text="Rolling Backtest"-->
+            <!--                inactive-text="Buy & Hold"-->
+            <!--                style="margin-left: 10px;"-->
+            <!--            ></el-switch>-->
 
             <el-button
                 type="primary"
@@ -42,11 +42,15 @@
             </el-button>
         </div>
 
-        <div class="charts-container">
+        <div class="charts-container" v-loading="loadingChart" element-loading-text="Loading charts..."
+             element-loading-background="rgba(255, 255, 255, 0.8)">
             <template v-if="showCharts">
-                <div class="chart" ref="pieChart"></div>
-                <div class="chart" ref="heatmapChart"></div>
-                <div class="chart" ref="lineChart"></div>
+                <div class="chart-large" ref="lineChart"></div>
+                <div class="chart-row">
+                    <div class="chart-half" ref="pieChart"></div>
+                    <div class="chart-half" ref="heatmapChart"></div>
+                </div>
+
                 <div class="description">
                     <h3>Portfolio Summary</h3>
                     <p>{{ descriptionText }}</p>
@@ -73,6 +77,7 @@ export default {
             codes: [],
             showCharts: false,
             rolling: false,
+            loadingChart: false,
             descriptionText:
                 "This portfolio contains a diversified selection of ETFs with varying levels of risk and return, aiming to balance long-term growth with stability.",
         };
@@ -102,6 +107,7 @@ export default {
                 this.$message.warning("Please select at least one ETF.");
                 return;
             }
+            this.loadingChart = true;
             this.$axios
                 .get(this.$httpUrl + "/compute", {
                     params: {
@@ -122,18 +128,27 @@ export default {
                 })
                 .catch(() => {
                     this.$message.error("Error during computation.");
+                })
+                .finally(() => {
+                    this.loadingChart = false;
                 });
         },
+
         drawCharts(data) {
             if (data.weights && Object.keys(data.weights).length > 0) {
                 const pieChart = echarts.init(this.$refs.pieChart);
                 const pieData = Object.entries(data.weights).map(([name, value]) => ({
                     name,
                     value: (value * 100).toFixed(2),
-                }));
+                })).sort((a, b) => b.value - a.value);
                 pieChart.setOption({
                     title: {text: "ETF Portfolio Allocation", left: "center"},
                     tooltip: {trigger: "item"},
+                    legend: {
+                        orient: 'vertical',
+                        left: 'left',
+                        data: pieData.map(item => item.name)
+                    },
                     series: [{
                         name: "Allocation (%)",
                         type: "pie",
@@ -149,9 +164,9 @@ export default {
                     }],
                 });
             }
-
             if (data.correlation) {
                 const heatmapChart = echarts.init(this.$refs.heatmapChart);
+                const fontSize = Math.max(8, 16 - Math.floor(this.code.join(",").length / 4));
                 const etfs = Object.keys(data.correlation);
                 const correlationData = [];
                 etfs.forEach((etf1, i) => {
@@ -160,7 +175,6 @@ export default {
                         correlationData.push([i, j, val.toFixed(2)]);
                     });
                 });
-
                 heatmapChart.setOption({
                     title: {text: "ETF Correlation Matrix", left: "center"},
                     tooltip: {position: "top"},
@@ -178,7 +192,10 @@ export default {
                         name: "Correlation",
                         type: "heatmap",
                         data: correlationData,
-                        label: {show: true},
+                        label: {
+                            show: true,
+                            fontSize: fontSize,
+                        },
                     }],
                 });
             }
@@ -207,7 +224,11 @@ export default {
             lineChart.setOption({
                 title: {text: "Cumulative Returns", left: "center"},
                 tooltip: {trigger: "axis"},
-                legend: {top: "5%"},
+                legend: {
+                    type: 'scroll',
+                    top: '5%'
+                },
+
                 xAxis: {type: "category", data: dates},
                 yAxis: {type: "value"},
                 series,
@@ -236,44 +257,42 @@ export default {
 </script>
 
 <style scoped>
-.model-select {
-    width: 260px;
-    margin-right: 10px;
-}
-
 .charts-container {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    grid-template-rows: auto auto;
-    gap: 10px;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
     margin-top: 20px;
-    min-height: 400px;
 }
 
-.chart {
-    width: 95%;
-    height: 300px;
+.chart-large {
+    width: 100%;
+    height: 450px;
     border: 1px solid #eee;
     border-radius: 10px;
-    padding: 10px;
     background: #fafafa;
-    transition: transform 0.3s ease;
+    padding: 10px;
 }
 
-.chart:hover {
-    transform: scale(1.02);
+.chart-row {
+    display: flex;
+    gap: 10px;
+}
+
+.chart-half {
+    flex: 1;
+    height: 350px;
+    border: 1px solid #eee;
+    border-radius: 10px;
+    background: #fafafa;
+    padding: 10px;
 }
 
 .description {
-    width: 95%;
     padding: 20px;
     border: 1px solid #eee;
     border-radius: 10px;
     background: #fff;
     line-height: 1.6;
-    grid-column: 2 / 3;
-    grid-row: 2 / 3;
-    align-self: start;
 }
 
 .empty-message {
@@ -286,4 +305,5 @@ export default {
     border-radius: 10px;
     background: #f9f9f9;
 }
+
 </style>
