@@ -1,100 +1,133 @@
 value,label
-SPY,SPDR S&P 500 ETF Trust
-IVV,iShares Core S&P 500 ETF
-VOO,Vanguard S&P 500 ETF
-QQQ,Invesco QQQ Trust
-DIA,SPDR Dow Jones Industrial Average ETF
-IWM,iShares Russell 2000 ETF
-SCHX,Schwab U.S. Large-Cap ETF
-SPLG,SPDR Portfolio S&P 500 ETF
-SPTM,SPDR Portfolio Total Stock Market ETF
-ITOT,iShares Core S&P Total U.S. Stock Market ETF
-XLF,Financial Select Sector SPDR Fund
-XLK,Technology Select Sector SPDR Fund
-XLY,Consumer Discretionary Select Sector SPDR Fund
-XLI,Industrial Select Sector SPDR Fund
-XLV,Health Care Select Sector SPDR Fund
-XLE,Energy Select Sector SPDR Fund
-XLC,Communication Services Select Sector SPDR Fund
-XLB,Materials Select Sector SPDR Fund
-XLRE,Real Estate Select Sector SPDR Fund
-XLU,Utilities Select Sector SPDR Fund
-VGT,Vanguard Information Technology ETF
-SMH,VanEck Semiconductor ETF
-SOXX,iShares Semiconductor ETF
-FTEC,Fidelity MSCI Information Technology ETF
-ARKK,ARK Innovation ETF
-IGV,iShares Expanded Tech-Software Sector ETF
-QTEC,First Trust NASDAQ-100 Technology Sector ETF
-SKYY,First Trust Cloud Computing ETF
-HACK,ETFMG Prime Cyber Security ETF
-BOTZ,Global X Robotics & Artificial Intelligence ETF
-VTV,Vanguard Value ETF
-VUG,Vanguard Growth ETF
-IWD,iShares Russell 1000 Value ETF
-IWF,iShares Russell 1000 Growth ETF
-SCHV,Schwab U.S. Large-Cap Value ETF
-SCHG,Schwab U.S. Large-Cap Growth ETF
-RPG,Invesco S&P 500 Pure Growth ETF
-RPV,Invesco S&P 500 Pure Value ETF
-QQQM,Invesco NASDAQ 100 ETF
-MGK,Vanguard Mega Cap Growth ETF
-EFA,iShares MSCI EAFE ETF
-EEM,iShares MSCI Emerging Markets ETF
-VEA,Vanguard FTSE Developed Markets ETF
-VWO,Vanguard FTSE Emerging Markets ETF
-IEFA,iShares Core MSCI EAFE ETF
-IEMG,iShares Core MSCI Emerging Markets ETF
-SCHF,Schwab International Equity ETF
-SPDW,SPDR Portfolio Developed World ex-US ETF
-DGS,WisdomTree Emerging Markets SmallCap Dividend Fund
-SCHE,Schwab Emerging Markets Equity ETF
+159863,Carbon Neutral ETF
+159919,CSI 300 ETF (Shenzhen)
+159920,Hang Seng ETF
+159922,CSI Dividend ETF
+159926,DAX Germany 30 ETF
+159928,Consumer ETF
+159929,Healthcare ETF
+159937,Bosera Gold ETF
+159949,ChiNext 50 ETF
+159963,H-Share ETF
+159995,Chip ETF
+510050,CSI 50 ETF (Shanghai)
+510300,CSI 300 ETF (Shanghai)
+510500,CSI 500 ETF (Shanghai)
+510880,Shanghai Dividend ETF
+511010,China Treasury Bond ETF
+511260,10-Year China Treasury Bond ETF
+511380,China Municipal Bond ETF
+512000,Securities ETF
+512170,Medical Devices ETF
+512480,Semiconductor ETF
+512660,Defense Industry ETF
+512690,Alcohol ETF
+512880,Bank ETF
+513050,China Internet ETF
+513100,Nasdaq 100 ETF (China)
+513180,Hang Seng Tech ETF
+513500,S&P 500 ETF (China)
+515700,New Energy Vehicle ETF
+588000,STAR 50 ETF
 AGG,iShares Core U.S. Aggregate Bond ETF
+ARKK,ARK Innovation ETF
 BND,Vanguard Total Bond Market ETF
-IEF,iShares 7-10 Year Treasury Bond ETF
-TLT,iShares 20+ Year Treasury Bond ETF
-SHY,iShares 1-3 Year Treasury Bond ETF
-LQD,iShares iBoxx $ Investment Grade Corporate Bond ETF
-HYG,iShares iBoxx $ High Yield Corporate Bond ETF
+BOTZ,Global X Robotics & Artificial Intelligence ETF
 BSV,Vanguard Short-Term Bond ETF
-TIP,iShares TIPS Bond ETF
-IGSB,iShares Short-Term Corporate Bond ETF
-VB,Vanguard Small-Cap ETF
-VO,Vanguard Mid-Cap ETF
-IJR,iShares Core S&P Small-Cap ETF
-IJH,iShares Core S&P Mid-Cap ETF
-SCHA,Schwab U.S. Small-Cap ETF
-SPSM,SPDR Portfolio S&P 600 Small Cap ETF
-MDY,SPDR S&P MidCap 400 ETF Trust
-RSP,Invesco S&P 500 Equal Weight ETF
-VTWO,Vanguard Russell 2000 ETF
-VIOO,Vanguard S&P Small-Cap 600 ETF
-VYM,Vanguard High Dividend Yield ETF
-HDV,iShares Core High Dividend ETF
-SCHD,Schwab U.S. Dividend Equity ETF
-DVY,iShares Select Dividend ETF
-SDY,SPDR S&P Dividend ETF
-NOBL,ProShares S&P 500 Dividend Aristocrats ETF
+CPER,United States Copper Index Fund
+DBA,Invesco DB Agriculture Fund
+DBC,Invesco DB Commodity Index Tracking Fund
 DGRO,iShares Core Dividend Growth ETF
-SPYD,SPDR Portfolio S&P 500 High Dividend ETF
-DHS,WisdomTree U.S. High Dividend Fund
 DGRW,WisdomTree U.S. Quality Dividend Growth Fund
-VNQ,Vanguard Real Estate ETF
-IYR,iShares U.S. Real Estate ETF
-SCHH,Schwab U.S. REIT ETF
-RWR,SPDR Dow Jones REIT ETF
-FREL,Fidelity MSCI Real Estate Index ETF
-USRT,iShares Core U.S. REIT ETF
-REM,iShares Mortgage Real Estate ETF
-REZ,iShares Residential and Multisector Real Estate ETF
+DGS,WisdomTree Emerging Markets SmallCap Dividend Fund
+DHS,WisdomTree U.S. High Dividend Fund
+DIA,SPDR Dow Jones Industrial Average ETF
 DRN,Direxion Daily Real Estate Bull 3x Shares
-GLD,SPDR Gold Shares
-SLV,iShares Silver Trust
+DVY,iShares Select Dividend ETF
+EEM,iShares MSCI Emerging Markets ETF
+EFA,iShares MSCI EAFE ETF
+FREL,Fidelity MSCI Real Estate Index ETF
+FTEC,Fidelity MSCI Information Technology ETF
 GDX,VanEck Gold Miners ETF
 GDXJ,VanEck Junior Gold Miners ETF
-USO,United States Oil Fund
-DBC,Invesco DB Commodity Index Tracking Fund
-UGA,United States Gasoline Fund
-DBA,Invesco DB Agriculture Fund
+GLD,SPDR Gold Shares
+HACK,ETFMG Prime Cyber Security ETF
+HDV,iShares Core High Dividend ETF
+HYG,iShares iBoxx $ High Yield Corporate Bond ETF
+IEF,iShares 7-10 Year Treasury Bond ETF
+IEFA,iShares Core MSCI EAFE ETF
+IEMG,iShares Core MSCI Emerging Markets ETF
+IGSB,iShares Short-Term Corporate Bond ETF
+IGV,iShares Expanded Tech-Software Sector ETF
+IJH,iShares Core S&P Mid-Cap ETF
+IJR,iShares Core S&P Small-Cap ETF
+ITOT,iShares Core S&P Total U.S. Stock Market ETF
+IVV,iShares Core S&P 500 ETF
+IWD,iShares Russell 1000 Value ETF
+IWF,iShares Russell 1000 Growth ETF
+IWM,iShares Russell 2000 ETF
+IYR,iShares U.S. Real Estate ETF
+LQD,iShares iBoxx $ Investment Grade Corporate Bond ETF
+MCHI,iShares MSCI China ETF
+MDY,SPDR S&P MidCap 400 ETF Trust
+MGK,Vanguard Mega Cap Growth ETF
+NOBL,ProShares S&P 500 Dividend Aristocrats ETF
 PALL,Aberdeen Standard Physical Palladium Shares ETF
-CPER,United States Copper Index Fund
+QQQ,Invesco QQQ Trust
+QQQM,Invesco NASDAQ 100 ETF
+QTEC,First Trust NASDAQ-100 Technology Sector ETF
+REM,iShares Mortgage Real Estate ETF
+REZ,iShares Residential and Multisector Real Estate ETF
+RPG,Invesco S&P 500 Pure Growth ETF
+RPV,Invesco S&P 500 Pure Value ETF
+RSP,Invesco S&P 500 Equal Weight ETF
+RWR,SPDR Dow Jones REIT ETF
+SCHA,Schwab U.S. Small-Cap ETF
+SCHD,Schwab U.S. Dividend Equity ETF
+SCHE,Schwab Emerging Markets Equity ETF
+SCHF,Schwab International Equity ETF
+SCHG,Schwab U.S. Large-Cap Growth ETF
+SCHH,Schwab U.S. REIT ETF
+SCHV,Schwab U.S. Large-Cap Value ETF
+SCHX,Schwab U.S. Large-Cap ETF
+SDY,SPDR S&P Dividend ETF
+SHY,iShares 1-3 Year Treasury Bond ETF
+SKYY,First Trust Cloud Computing ETF
+SLV,iShares Silver Trust
+SMH,VanEck Semiconductor ETF
+SOXX,iShares Semiconductor ETF
+SPDW,SPDR Portfolio Developed World ex-US ETF
+SPLG,SPDR Portfolio S&P 500 ETF
+SPSM,SPDR Portfolio S&P 600 Small Cap ETF
+SPTM,SPDR Portfolio Total Stock Market ETF
+SPY,SPDR S&P 500 ETF Trust
+SPYD,SPDR Portfolio S&P 500 High Dividend ETF
+TIP,iShares TIPS Bond ETF
+TLT,iShares 20+ Year Treasury Bond ETF
+UGA,United States Gasoline Fund
+USO,United States Oil Fund
+USRT,iShares Core U.S. REIT ETF
+VB,Vanguard Small-Cap ETF
+VEA,Vanguard FTSE Developed Markets ETF
+VGT,Vanguard Information Technology ETF
+VIOO,Vanguard S&P Small-Cap 600 ETF
+VNQ,Vanguard Real Estate ETF
+VO,Vanguard Mid-Cap ETF
+VOO,Vanguard S&P 500 ETF
+VT,Vanguard Total World Stock ETF
+VTI,Vanguard Total Stock Market ETF
+VTV,Vanguard Value ETF
+VTWO,Vanguard Russell 2000 ETF
+VUG,Vanguard Growth ETF
+VWO,Vanguard FTSE Emerging Markets ETF
+VYM,Vanguard High Dividend Yield ETF
+XLB,Materials Select Sector SPDR Fund
+XLC,Communication Services Select Sector SPDR Fund
+XLE,Energy Select Sector SPDR Fund
+XLF,Financial Select Sector SPDR Fund
+XLI,Industrial Select Sector SPDR Fund
+XLK,Technology Select Sector SPDR Fund
+XLRE,Real Estate Select Sector SPDR Fund
+XLU,Utilities Select Sector SPDR Fund
+XLV,Health Care Select Sector SPDR Fund
+XLY,Consumer Discretionary Select Sector SPDR Fund

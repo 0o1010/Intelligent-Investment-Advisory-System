@@ -251,6 +251,7 @@ async def get_portfolio(etf_list: str, rolling: bool = False, start_date: str = 
             rf_series=rf_series,
             max_volatility=0.2
         )
+        print(weights,returns)
 
         w_series = _weight_series(weights, returns.columns)
         port_ret = returns.dot(w_series)

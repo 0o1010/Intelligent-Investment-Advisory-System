@@ -153,6 +153,11 @@ export default {
                         type: "pie",
                         radius: "50%",
                         data: pieData,
+                        label: {
+                            show: true,
+                            formatter: '{b}: {d}%',
+                            fontSize: 14
+                        },
                         emphasis: {
                             itemStyle: {
                                 shadowBlur: 20,
