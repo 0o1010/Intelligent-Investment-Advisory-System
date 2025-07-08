@@ -45,12 +45,11 @@
         <div class="charts-container" v-loading="loadingChart" element-loading-text="Loading charts..."
              element-loading-background="rgba(255, 255, 255, 0.8)">
             <template v-if="showCharts">
-                <div class="chart-large" ref="lineChart"></div>
                 <div class="chart-row">
                     <div class="chart-half" ref="pieChart"></div>
                     <div class="chart-half" ref="heatmapChart"></div>
                 </div>
-
+                <div class="chart-large" ref="lineChart"></div>
                 <div class="description">
                     <h3>Portfolio Summary</h3>
                     <p>{{ descriptionText }}</p>
@@ -208,11 +207,9 @@ export default {
             for (const [name, curve] of Object.entries(data.cum_curve)) {
                 const curveDates = Object.keys(curve);
                 const curveValues = Object.values(curve).map(v => parseFloat(v.toFixed(2)));
-
                 if (!dates) {
                     dates = curveDates;
                 }
-
                 series.push({
                     name,
                     type: "line",
