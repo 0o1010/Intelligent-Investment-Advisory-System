@@ -1,34 +1,32 @@
 value,label
-159863,Carbon Neutral ETF
-159919,CSI 300 ETF (Shenzhen)
-159920,Hang Seng ETF
-159922,CSI Dividend ETF
-159926,DAX Germany 30 ETF
-159928,Consumer ETF
-159929,Healthcare ETF
-159937,Bosera Gold ETF
-159949,ChiNext 50 ETF
-159963,H-Share ETF
-159995,Chip ETF
-510050,CSI 50 ETF (Shanghai)
-510300,CSI 300 ETF (Shanghai)
-510500,CSI 500 ETF (Shanghai)
-510880,Shanghai Dividend ETF
-511010,China Treasury Bond ETF
-511260,10-Year China Treasury Bond ETF
-511380,China Municipal Bond ETF
-512000,Securities ETF
-512170,Medical Devices ETF
-512480,Semiconductor ETF
-512660,Defense Industry ETF
-512690,Alcohol ETF
-512880,Bank ETF
-513050,China Internet ETF
-513100,Nasdaq 100 ETF (China)
-513180,Hang Seng Tech ETF
-513500,S&P 500 ETF (China)
-515700,New Energy Vehicle ETF
-588000,STAR 50 ETF
+159863.SZ,Carbon Neutral ETF
+159919.SZ,CSI 300 ETF (Shenzhen)
+159920.SZ,Hang Seng ETF
+159922.SZ,CSI Dividend ETF
+159928.SZ,Consumer ETF
+159929.SZ,Healthcare ETF
+159937.SZ,Bosera Gold ETF
+159949.SZ,ChiNext 50 ETF
+159995.SZ,Chip ETF
+510050.SS,CSI 50 ETF (Shanghai)
+510300.SS,CSI 300 ETF (Shanghai)
+510500.SS,CSI 500 ETF (Shanghai)
+510880.SS,Shanghai Dividend ETF
+511010.SS,China Treasury Bond ETF
+511260.SS,10-Year China Treasury Bond ETF
+511380.SS,China Municipal Bond ETF
+512000.SS,Securities ETF
+512170.SS,Medical Devices ETF
+512480.SS,Semiconductor ETF
+512660.SS,Defense Industry ETF
+512690.SS,Alcohol ETF
+512880.SS,Bank ETF
+513050.SS,China Internet ETF
+513100.SS,Nasdaq 100 ETF (China)
+513180.SS,Hang Seng Tech ETF
+513500.SS,S&P 500 ETF (China)
+515700.SS,New Energy Vehicle ETF
+588000.SS,STAR 50 ETF
 AGG,iShares Core U.S. Aggregate Bond ETF
 ARKK,ARK Innovation ETF
 BND,Vanguard Total Bond Market ETF

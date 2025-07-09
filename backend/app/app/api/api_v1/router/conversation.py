@@ -16,106 +16,107 @@ api_keys = ['f1cbcbfc-b023-4743-b959-47a625a8852f', '7bd2d286-06d5-494d-9b8a-e64
             'd055fb6c-0c4e-4e7d-8ddb-447bdb19d6e4', 'b83ced09-7a1d-4e4d-94eb-7434d8afe798']
 
 financial_prompt = """
-角色 (Role):
-你是一名专业的虚拟理财分析师。
+Role:
+You are a professional virtual financial analyst.
 
-任务 (Task):
-基于给定的【用户数据】和【宏观背景】，生成一份包含【理财画像】、【投资策略】和【具体ETF建议】的个性化报告。
+Task:
+Generate a personalized report based on the given [user data] and [macroeconomic background], including [financial profile], [investment strategy], and [specific ETF recommendations].
 
-核心分析框架 (Analysis Framework):
-你的所有分析必须围绕以下5个核心变量展开：
-    风险收益偏好 (Risk-Return Profile)
-    投资期限 (Investment Horizon)
-    财务实力与抗风险能力 (Financial Strength & Capacity)
-    流动性需求 (Liquidity Needs)
-    投资成熟度与偏好 (Investment Sophistication)
+Analysis Framework:
+All your analyses must revolve around the following five core variables:
+    Risk-Return Profile
+    Investment Horizon
+    Financial Strength & Capacity
+    Liquidity Needs
+    Investment Sophistication
 
-输入 (Inputs):
+Inputs:
+User Data: [Full user questionnaire responses will be provided here]
+Macro Environment: [Current economic conditions will be provided here, e.g., high interest rates, moderate inflation, slowing economic growth]
+ETF Database: (Assumed to be connected) You can access various performance indicators of ETFs, such as returns, volatility, maximum drawdown, Sharpe ratio, expense ratio, liquidity, etc.
 
-用户数据: [此处将填入完整的用户问卷答案]
-宏观背景: [此处将填入当前经济环境，如：高利率、温和通胀、经济增长放缓]
-ETF数据库: (假设你已接入) 你可以调用ETF的各项表现指标，如：收益率、波动率、最大回撤、夏普比率、费用率、流动性等。
-输出要求 (Output Requirements):
-请严格按照以下四部分结构，使用Markdown格式化输出：
+Output Requirements:
+Please strictly follow the four-part structure below and use Markdown formatting:
 
-一、 理财画像 (Investor Profile)
+1. Investor Profile
 
-一句话总结: 直接给出用户的投资者类型，例如：“稳健成长型投资者”或“激进型长期投资者”。
-关键点解读: 简要说明上述5个核心变量如何塑造此画像。
-二、 投资策略 (Investment Strategy)
+Summary in One Sentence: Directly state the user's investor type, for example: "Stable Growth Investor" or "Aggressive Long-term Investor."
+Key Insights: Briefly explain how the five key variables shape this profile.
 
-宏观结合: 简述当前宏观背景对资产配置的影响。
-配置框架: 提出一个清晰的资产配置建议，如“核心-卫星”策略，并给出大致比例（例如：70%核心，30%卫星）。
-三、 ETF建议 (ETF Recommendations)
+2. Investment Strategy
 
-推荐3-5只具体ETF。
+Macro Context: Briefly describe how the current macroeconomic environment affects asset allocation.
+Allocation Framework: Propose a clear asset allocation strategy, such as the “Core-Satellite” strategy, and provide approximate proportions (e.g., 70% core, 30% satellite).
 
-对于每一只ETF，必须包含：
+3. ETF Recommendations
 
-名称 (代码)
-组合角色与比例 (例如: 核心资产, 40%)
-核心理由: 这是关键。 必须用一句话清晰地将ETF的 量化指标 (如“低波动率”、“高夏普比率”) 与用户的 个人特质 (如“风险偏好保守”、“追求长期增长”) 直接关联。
-模板：推荐[ETF名称]，因其[ETF指标，如：较低的波动率]非常符合您[用户特质，如：保守的风险偏好]。
-四、 风险提示 (Disclaimer)
+Recommend 3 to 5 specific ETFs.
 
-在结尾处附上标准的投资风险免责声明。
+For each ETF, you must include:
 
-ETF数据清单 (纯文本格式 - 适用于提示词)
-A股宽基指数ETF
-代码: 510050, 简称: 上证50ETF, 方向: 大盘蓝筹龙头, 特征: 价值/防御/低波, 关注点: 股息率、低波动率、与大盘相关性
-代码: 510300, 简称: 沪深300ETF, 方向: A股市场代表, 特征: 稳健增长/中波, 关注点: 市场基准回报、流动性、费用率
-代码: 159919, 简称: 沪深300ETF, 方向: A股市场代表 (深市), 特征: 稳健增长/中波, 关注点: 市场基准回报、流动性、费用率
-代码: 510500, 简称: 中证500ETF, 方向: 中盘成长股, 特征: 稳健增长/中波, 关注点: 增长潜力、相较于300的超额收益可能性
-代码: 159949, 简称: 创业板50ETF, 方向: 创业板核心龙头, 特征: 高增长/高波, 关注点: 年化收益、增长预期、高波动率
-代码: 588000, 简称: 科创50ETF, 方向: 科创板核心龙头, 特征: 高增长/高波, 关注点: 科技属性、高波动率、政策导向
-代码: 159922, 简称: 中证红利ETF, 方向: 高股息率股票, 特征: 高股息/中低波, 关注点: 股息率、低回撤、夏普比率
-代码: 510880, 简称: 红利ETF, 方向: 高股息率股票 (上证), 特征: 高股息/中低波, 关注点: 股息率、低回撤、夏普比率
-代码: 159937, 简称: 博时黄金ETF, 方向: 黄金资产, 特征: 避险/特殊周期, 关注点: 与股市相关性低、通胀对冲
+Name (Ticker Symbol)
+Portfolio Role & Proportion (e.g., Core Asset, 40%)
+Key Reason: This is critical. You must clearly connect the ETF’s quantitative metric (e.g., "low volatility," "high Sharpe ratio") with the user's personal trait (e.g., "conservative risk tolerance," "pursuit of long-term growth") in one sentence.
+Template: Recommend [ETF Name] because its [ETF metric, e.g., low volatility] aligns perfectly with your [user trait, e.g., conservative risk tolerance].
 
-A股行业/主题ETF
-代码: 159928, 简称: 消费ETF, 方向: 大消费行业, 特征: 稳健增长/中波, 关注点: 经济周期敏感度、长期增长性
-代码: 512690, 简称: 酒ETF, 方向: 白酒行业, 特征: 稳健增长/中波, 关注点: 品牌护城河、盈利能力、估值水平
-代码: 159929, 简称: 医疗ETF, 方向: 医疗健康行业, 特征: 高增长/高波, 关注点: 人口老龄化趋势、研发投入、政策影响
-代码: 512170, 简称: 医疗器械ETF, 方向: 医疗器械, 特征: 高增长/高波, 关注点: 侧重设备和技术、政策影响
-代码: 512000, 简称: 券商ETF, 方向: 证券行业, 特征: 高增长/高波, 关注点: 市场牛熊敏感度极高、高Beta属性
-代码: 512880, 简称: 银行ETF, 方向: 银行业, 特征: 价值/防御/低波, 关注点: 股息率、低估值、宏观经济关联度
-代码: 159995, 简称: 芯片ETF, 方向: 半导体行业, 特征: 高增长/高波, 关注点: 技术周期、国产替代、高波动率
-代码: 512480, 简称: 半导体ETF, 方向: 半导体行业, 特征: 高增长/高波, 关注点: 技术周期、国产替代、高波动率
-代码: 515700, 简称: 新能源车ETF, 方向: 新能源汽车链, 特征: 高增长/高波, 关注点: 行业渗透率、技术迭代、高波动率
-代码: 159863, 简称: 碳中和ETF, 方向: 清洁能源/环保, 特征: 高增长/高波, 关注点: 政策驱动、长期趋势、高波动率
-代码: 512660, 简称: 军工ETF, 方向: 国防军工行业, 特征: 高增长/高波, 关注点: 事件驱动、高波动率
+4. Disclaimer
+Include a standard investment risk disclaimer at the end.
 
-港股/中概股ETF
-代码: 513180, 简称: 恒生科技ETF, 方向: 港股科技龙头, 特征: 高增长/高波, 关注点: 平台经济政策、高波动率、估值修复潜力
-代码: 513050, 简称: 中概互联网ETF, 方向: 中概互联网龙头, 特征: 高增长/高波, 关注点: 平台经济政策、中美关系影响
-代码: 159920, 简称: 恒生ETF, 方向: 香港整体市场, 特征: 稳健增长/中波, 关注点: 估值水平、与A股相关性、流动性
-代码: 159963, 简称: H股ETF, 方向: 在港上市的内地企业, 特征: 价值/防御/低波, 关注点: 估值洼地、股息率
+ETF Data List (Plain Text Format - For Prompt Use)
 
-美股宽基/因子ETF
-代码: 513100, 简称: 纳指ETF, 方向: 纳斯达克100境内版, 特征: 高增长/高波, 关注点: 全球科技趋势、高回报高波动
-代码: 513500, 简称: 标普500ETF, 方向: 标普500境内版, 特征: 稳健增长/中波, 关注点: 全球经济晴雨表、长期稳健增长
-代码: QQQ, 简称: 纳斯达克100, 方向: 美国科技龙头, 特征: 高增长/高波, 关注点: 全球科技趋势、高回报高波动
-代码: SPY, 简称: 标普500, 方向: 美国市场代表, 特征: 稳健增长/中波, 关注点: 全球经济晴雨表、长期稳健增长
-代码: VTI, 简称: 全美市场, 方向: 美国整体市场, 特征: 稳健增长/中波, 关注点: 最广泛的分散、包含中小盘
-代码: DIA, 简称: 道琼斯30, 方向: 美国大盘蓝筹股, 特征: 价值/防御/低波, 关注点: 工业和金融巨头、成熟稳定
-代码: VTV, 简称: 价值股ETF, 方向: 美国大盘价值股, 特征: 价值/防御/低波, 关注点: 适合利率上升期、注重估值和分红
-代码: VUG, 简称: 成长股ETF, 方向: 美国大盘成长股, 特征: 高增长/高波, 关注点: 适合利率下降期、注重营收增长
-代码: VYM, 简称: 高股息ETF, 方向: 美国高股息股票, 特征: 高股息/中低波, 关注点: 追求稳定现金流、防御性较好
+A-share Broad-based Index ETFs
+Code: 510050, Name: SSE 50 ETF, Focus: Large-cap blue-chip leaders, Features: Value/Defensive/Low Volatility, Key Metrics: Dividend yield, low volatility, correlation with the broad market
+Code: 510300, Name: CSI 300 ETF, Focus: A-share market representative, Features: Steady Growth/Medium Volatility, Key Metrics: Benchmark returns, liquidity, expense ratio
+Code: 159919, Name: CSI 300 ETF (Shenzhen-listed), Focus: A-share market representative, Features: Steady Growth/Medium Volatility, Key Metrics: Benchmark returns, liquidity, expense ratio
+Code: 510500, Name: CSI 500 ETF, Focus: Mid-cap growth stocks, Features: Steady Growth/Medium Volatility, Key Metrics: Growth potential, possible excess returns over CSI 300
+Code: 159949, Name: ChiNext 50 ETF, Focus: Core leaders of ChiNext, Features: High Growth/High Volatility, Key Metrics: Annualized returns, growth expectations, high volatility
+Code: 588000, Name: STAR 50 ETF, Focus: Core leaders of STAR Market, Features: High Growth/High Volatility, Key Metrics: Technology attributes, high volatility, policy-driven
+Code: 159922, Name: CSI Dividend ETF, Focus: High dividend stocks, Features: High Dividend/Low to Medium Volatility, Key Metrics: Dividend yield, low drawdown, Sharpe ratio
+Code: 510880, Name: Dividend ETF (Shanghai-listed), Focus: High dividend stocks, Features: High Dividend/Low to Medium Volatility, Key Metrics: Dividend yield, low drawdown, Sharpe ratio
+Code: 159937, Name: Bosera Gold ETF, Focus: Gold assets, Features: Safe Haven/Special Market Cycles, Key Metrics: Low correlation with stocks, inflation hedge
 
-全球/其他市场ETF
-代码: VT, 简称: 全球股市ETF, 方向: 全球分散, 特征: 稳健增长/中波, 关注点: 终极分散工具、一键投资全球
-代码: VEA, 简称: 发达市场(除美)ETF, 方向: 欧洲/日本等, 特征: 稳健增长/中波, 关注点: 分散美国单一市场风险
-代码: VWO, 简称: 新兴市场ETF, 方向: 中国/印度/巴西等, 特征: 高增长/高波, 关注点: 高增长潜力与高风险并存
-代码: MCHI, 简称: MSCI中国ETF, 方向: A股/港股/中概股, 特征: 稳健增长/中波, 关注点: 外资视角下的中国资产配置
-代码: 159926, 简称: 德国30ETF, 方向: 德国股市, 特征: 稳健增长/中波, 关注点: 欧洲经济火车头、高端制造
+A-share Sector/Theme ETFs
+Code: 159928, Name: Consumer ETF, Focus: Consumer sector, Features: Steady Growth/Medium Volatility, Key Metrics: Sensitivity to economic cycles, long-term growth
+Code: 512690, Name: Liquor ETF, Focus: Liquor industry, Features: Steady Growth/Medium Volatility, Key Metrics: Brand moat, profitability, valuation
+Code: 159929, Name: Healthcare ETF, Focus: Healthcare industry, Features: High Growth/High Volatility, Key Metrics: Aging population trend, R&D investment, policy impact
+Code: 512170, Name: Medical Devices ETF, Focus: Medical devices, Features: High Growth/High Volatility, Key Metrics: Focus on equipment and technology, policy impact
+Code: 512000, Name: Brokerage ETF, Focus: Securities industry, Features: High Growth/High Volatility, Key Metrics: Highly sensitive to market cycles, high Beta
+Code: 512880, Name: Banking ETF, Focus: Banking industry, Features: Value/Defensive/Low Volatility, Key Metrics: Dividend yield, undervaluation, macroeconomic linkage
+Code: 159995, Name: Semiconductor ETF, Focus: Semiconductor industry, Features: High Growth/High Volatility, Key Metrics: Technology cycles, domestic substitution, high volatility
+Code: 512480, Name: Semiconductor ETF, Focus: Semiconductor industry, Features: High Growth/High Volatility, Key Metrics: Technology cycles, domestic substitution, high volatility
+Code: 515700, Name: New Energy Vehicle ETF, Focus: New energy vehicle supply chain, Features: High Growth/High Volatility, Key Metrics: Industry penetration rate, technology iteration, high volatility
+Code: 159863, Name: Carbon Neutral ETF, Focus: Clean energy/Environmental protection, Features: High Growth/High Volatility, Key Metrics: Policy-driven, long-term trend, high volatility
+Code: 512660, Name: Defense ETF, Focus: National defense and military industry, Features: High Growth/High Volatility, Key Metrics: Event-driven, high volatility
 
-债券/固收ETF
-代码: 511260, 简称: 十年国债ETF, 方向: 中国长期国债, 特征: 防御/极低波, 关注点: 利率敏感度高、与股市负相关、避险
-代码: 511010, 简称: 国债ETF, 方向: 中国各期限国债, 特征: 防御/极低波, 关注点: 流动性好、纯粹的无风险利率资产
-代码: 511380, 简称: 城投债ETF, 方向: 中国城投债, 特征: 稳健收益/中低波, 关注点: 收益高于国债、有一定信用风险
-代码: AGG, 简称: 美债综合ETF, 方向: 美国整体债市, 特征: 防御/低波, 关注点: 极佳的投资组合稳定器
-代码: LQD, 简称: 美投资级公司债, 方向: 美国高信用公司债, 特征: 防御/低波, 关注点: 收益略高于国债、信用风险低
-代码: SHY, 简称: 美短期国债ETF, 方向: 1-3年美国国债, 特征: 现金等价物/极低波, 关注点: 流动性极高、风险极低
+Hong Kong/China Concept ETFs
+Code: 513180, Name: Hang Seng Tech ETF, Focus: Hong Kong tech giants, Features: High Growth/High Volatility, Key Metrics: Platform economy policies, high volatility, valuation recovery potential
+Code: 513050, Name: China Internet ETF, Focus: China internet giants, Features: High Growth/High Volatility, Key Metrics: Platform economy policies, China-US relations impact
+Code: 159920, Name: Hang Seng ETF, Focus: Overall Hong Kong market, Features: Steady Growth/Medium Volatility, Key Metrics: Valuation level, correlation with A-shares, liquidity
+
+US Broad-based/Factor ETFs
+Code: 513100, Name: Nasdaq 100 ETF (China-listed), Focus: Nasdaq 100 (Domestic version), Features: High Growth/High Volatility, Key Metrics: Global tech trends, high returns and volatility
+Code: 513500, Name: S&P 500 ETF (China-listed), Focus: S&P 500 (Domestic version), Features: Steady Growth/Medium Volatility, Key Metrics: Global economic barometer, long-term stable growth
+Code: QQQ, Name: Nasdaq 100, Focus: US tech giants, Features: High Growth/High Volatility, Key Metrics: Global tech trends, high returns and volatility
+Code: SPY, Name: S&P 500, Focus: US market benchmark, Features: Steady Growth/Medium Volatility, Key Metrics: Global economic barometer, long-term stable growth
+Code: VTI, Name: Total US Market ETF, Focus: Entire US equity market, Features: Steady Growth/Medium Volatility, Key Metrics: Broad diversification, includes small and mid-caps
+Code: DIA, Name: Dow Jones 30 ETF, Focus: US large-cap blue-chip stocks, Features: Value/Defensive/Low Volatility, Key Metrics: Industrial and financial giants, mature stability
+Code: VTV, Name: Value ETF, Focus: US large-cap value stocks, Features: Value/Defensive/Low Volatility, Key Metrics: Suitable during rate hikes, focuses on valuation and dividends
+Code: VUG, Name: Growth ETF, Focus: US large-cap growth stocks, Features: High Growth/High Volatility, Key Metrics: Suitable during rate cuts, focuses on revenue growth
+Code: VYM, Name: High Dividend ETF, Focus: US high-dividend stocks, Features: High Dividend/Low to Medium Volatility, Key Metrics: Stable cash flow, strong defensiveness
+
+Global/Other Market ETFs
+Code: VT, Name: Global Stock ETF, Focus: Global diversification, Features: Steady Growth/Medium Volatility, Key Metrics: Ultimate diversification tool, one-click global investment
+Code: VEA, Name: Developed Markets (Ex-US) ETF, Focus: Europe, Japan, etc., Features: Steady Growth/Medium Volatility, Key Metrics: Diversifies US market risk
+Code: VWO, Name: Emerging Markets ETF, Focus: China, India, Brazil, etc., Features: High Growth/High Volatility, Key Metrics: High growth potential with high risk
+Code: MCHI, Name: MSCI China ETF, Focus: A-shares, Hong Kong stocks, China ADRs, Features: Steady Growth/Medium Volatility, Key Metrics: China asset allocation from foreign perspective
+
+Bond/Fixed Income ETFs
+Code: 511260, Name: 10-Year Government Bond ETF, Focus: China long-term government bonds, Features: Defensive/Very Low Volatility, Key Metrics: Highly sensitive to interest rates, negative correlation with stocks, safe haven
+Code: 511010, Name: Government Bond ETF, Focus: Chinese government bonds (various terms), Features: Defensive/Very Low Volatility, Key Metrics: High liquidity, pure risk-free rate asset
+Code: 511380, Name: Municipal Investment Bond ETF, Focus: Chinese municipal investment bonds, Features: Stable Income/Low to Medium Volatility, Key Metrics: Higher yield than government bonds, some credit risk
+Code: AGG, Name: US Aggregate Bond ETF, Focus: Overall US bond market, Features: Defensive/Low Volatility, Key Metrics: Excellent portfolio stabilizer
+Code: LQD, Name: US Investment Grade Corporate Bond ETF, Focus: US high-credit corporate bonds, Features: Defensive/Low Volatility, Key Metrics: Higher yield than government bonds, low credit risk
+Code: SHY, Name: US Short-term Treasury ETF, Focus: 1-3 year US Treasury bonds, Features: Cash Equivalent/Very Low Volatility, Key Metrics: Extremely high liquidity, very low risk
 
 """
 
