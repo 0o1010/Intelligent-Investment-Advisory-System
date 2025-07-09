@@ -91,8 +91,8 @@ export default {
                     value: 'Qwen3-32B',
                     label: 'Qwen3-32B'
                 }, {
-                    value: 'DeepSeek-R1-0528',
-                    label: 'DeepSeek-R1-0528'
+                    value: 'DeepSeek-R1-Distill-Llama-70B',
+                    label: 'DeepSeek-R1-Distill-Llama-70B'
                 },
             ]
         }
