@@ -1,8 +1,8 @@
 from fastapi import APIRouter, Query
 
-from sqlalchemy.orm import Session
+import random
 from app.core.response import resp_200
-from app.db.db_session import get_db
+import openai
 from typing import List, Tuple, Dict, Optional
 import yfinance as yf
 import pandas as pd
@@ -12,6 +12,8 @@ from scipy.optimize import minimize
 from datetime import datetime
 
 router = APIRouter()
+api_keys = ['f1cbcbfc-b023-4743-b959-47a625a8852f', '7bd2d286-06d5-494d-9b8a-e6492add377e',
+            'd055fb6c-0c4e-4e7d-8ddb-447bdb19d6e4', 'b83ced09-7a1d-4e4d-94eb-7434d8afe798']
 
 
 def download_data(tickers: List[str], start: str, end: str) -> pd.DataFrame:
@@ -25,7 +27,6 @@ def download_data(tickers: List[str], start: str, end: str) -> pd.DataFrame:
 
 
 def compute_daily_returns(prices: pd.DataFrame) -> pd.DataFrame:
-    """Compute arithmetic daily returns"""
     return prices.pct_change().dropna()
 
 
@@ -65,7 +66,6 @@ def calculate_portfolio_performance(weights, returns, rf_series=None):
 
 
 def compute_cumulative_returns(daily_returns: pd.Series) -> pd.Series:
-    """Compute cumulative net value curve from daily arithmetic returns"""
     return (1 + daily_returns).cumprod()
 
 
@@ -77,15 +77,12 @@ def optimize_custom_portfolio(asset_list: List[str], start_date: str, end_date: 
                               ):
     prices = download_data(asset_list, start_date, end_date)
     returns = compute_daily_returns(prices)
-
     n = len(asset_list)
     b_low, b_high = (-max_weight, max_weight) if allow_short else (min_weight, max_weight)
     bounds = tuple((b_low, b_high) for _ in range(n))
-
     cons = [{"type": "eq", "fun": lambda w: w.sum() - 1}]
     if max_volatility:
         cons.append({"type": "ineq", "fun": lambda w: max_volatility - returns.dot(w).std() * np.sqrt(252)})
-
     x0 = np.repeat(1.0 / n, n)
 
     def _neg_sharpe(w):
@@ -97,17 +94,16 @@ def optimize_custom_portfolio(asset_list: List[str], start_date: str, end_date: 
         method="SLSQP",
         bounds=bounds,
         constraints=cons,
-        options={"disp": False, "maxiter": 1000}
+        options={"disp": False, "maxiter": 500, "ftol": 1e-6}
     )
 
     w_opt = pd.Series(res.x, index=returns.columns)
     w_opt = w_opt[w_opt > 1e-3]
     if len(w_opt) < min_assets:
         raise ValueError(f"Optimised portfolio holds only {len(w_opt)} assets (<{min_assets}).")
-
     w_opt /= w_opt.sum()
     ann_ret, ann_vol, sharpe = calculate_portfolio_performance(w_opt, returns, rf_series)
-    return w_opt.to_dict(), ann_ret, ann_vol, sharpe, returns
+    return w_opt.to_dict(), ann_ret, ann_vol, sharpe, returns, prices
 
 
 def evaluate_portfolio(weights, returns, rf_series):
@@ -135,52 +131,44 @@ def evaluate_portfolio(weights, returns, rf_series):
     }
 
 
-def efficient_frontier(returns: pd.DataFrame, target_returns: np.ndarray) -> pd.DataFrame:
-    mean_r = returns.mean()
-    cov_m = returns.cov() * 252
-    n = len(mean_r)
-
-    def port_vol(w):
-        return np.sqrt(w.T @ cov_m @ w)
-
-    vols = []
-    for tgt in target_returns:
-        cons = (
-            {"type": "eq", "fun": lambda w: w.sum() - 1},
-            {"type": "eq", "fun": lambda w: w.dot(mean_r) * 252 - tgt}
-        )
-        bnds = tuple((0, 1) for _ in range(n))
-        x0 = np.repeat(1 / n, n)
-        res = minimize(port_vol, x0, method="SLSQP", bounds=bnds, constraints=cons)
-        vols.append(np.nan if not res.success else res.fun)
-
-    return pd.DataFrame({"Return": target_returns, "Volatility": vols})
+def static_backtest_with_rebalancing(
+        prices: pd.DataFrame,
+        weights: Dict[str, float],
+        rebalance_freq: str = "BME"
+) -> pd.Series:
+    returns = compute_daily_returns(prices)
+    rebal_dates = pd.date_range(start=returns.index[0], end=returns.index[-1], freq=rebalance_freq).unique()
+    port_ret = pd.Series(dtype=float)
+    for i in range(1, len(rebal_dates)):
+        prev_date, curr_date = rebal_dates[i - 1], rebal_dates[i]
+        seg = returns.loc[prev_date:curr_date]
+        w_ser = _weight_series(weights, returns.columns)
+        seg_ret = seg.dot(w_ser)
+        port_ret = pd.concat([port_ret, seg_ret.iloc[1:]])
+    port_ret = port_ret.sort_index()
+    port_cum = (1 + port_ret).cumprod()
+    return port_cum
 
 
 def rolling_backtest(
         tickers: List[str],
         start_date: str,
         end_date: str,
-        rebalance_freq: str = "BM",
-        lookback_days: int = 252,
+        rebalance_freq: str = "BME",
+        lookback_days: int = 120,
         benchmark: str = "SPY",
         rf_series: Optional[pd.Series] = None,
         **opt_kwargs
-) -> Tuple[pd.Series, pd.Series]:
+) -> Tuple[pd.Series, pd.Series, List[Dict[str, float]]]:
     prices = download_data(tickers + [benchmark], start_date, end_date)
     rets = compute_daily_returns(prices)
-
-    rebal_dates = pd.date_range(start=rets.index[0],
-                                end=rets.index[-1],
-                                freq=rebalance_freq).unique()
-
+    rebal_dates = pd.date_range(start=rets.index[0], end=rets.index[-1], freq=rebalance_freq).unique()
     all_port_ret = []
+    all_weights = []
     for i in range(1, len(rebal_dates)):
         prev_date, curr_date = rebal_dates[i - 1], rebal_dates[i]
-
         hist_start = curr_date - pd.Timedelta(days=lookback_days)
         hist_slice = rets.loc[hist_start:curr_date - pd.Timedelta(days=1), tickers]
-
         w_opt, *_ = optimize_custom_portfolio(
             asset_list=tickers,
             start_date=str(hist_start.date()),
@@ -188,37 +176,49 @@ def rolling_backtest(
             rf_series=rf_series,
             **opt_kwargs
         )
+        all_weights.append(w_opt)
         w_ser = _weight_series(w_opt, tickers)
         seg_ret = rets.loc[prev_date:curr_date, tickers].dot(w_ser)
         all_port_ret.append(seg_ret.iloc[1:])
-
     port_ret = pd.concat(all_port_ret).sort_index()
     port_cum = (1 + port_ret).cumprod()
     bench_cum = (1 + rets[benchmark]).cumprod()
-    return port_cum, bench_cum
-
-
-def _annual_stats(daily_ret: pd.Series, rf_series: Optional[pd.Series] = None) -> Tuple[float, float, float]:
-    ann_ret = daily_ret.mean() * 252
-    ann_vol = daily_ret.std() * np.sqrt(252)
-    if rf_series is not None:
-        rf = rf_series.reindex(daily_ret.index).ffill().bfill() / 252
-        sharpe = (daily_ret - rf).mean() / daily_ret.std() * np.sqrt(252)
-    else:
-        sharpe = ann_ret / ann_vol if ann_vol > 0 else 0.0
-    return ann_ret, ann_vol, sharpe
+    return port_cum, bench_cum, all_weights
 
 
 @router.get("/compute")
-async def get_portfolio(etf_list: str, rolling: bool = False, start_date: str = '2018-01-01',
+async def get_portfolio(etf_list: str, rolling: bool,
+                        start_date: str = '2018-01-01',
                         end_date: Optional[str] = Query(None)):
     if end_date is None:
         end_date = datetime.now().strftime('%Y-%m-%d')
     etf_list = etf_list.split(",")
     rf_series = get_risk_free_rate_series(start_date, end_date)
-
+    weights, ann_ret, ann_vol, sharpe, returns, prices = optimize_custom_portfolio(
+        asset_list=etf_list,
+        start_date=start_date,
+        end_date=end_date,
+        min_weight=0.05,
+        max_weight=0.5,
+        min_assets=3,
+        allow_short=False,
+        rf_series=rf_series,
+        max_volatility=0.2
+    )
+    ticker_name_map = {
+        "AOA": "iShares Core 80/20 Aggressive Allocation ETF (AOA)",
+        "AOR": "iShares Core 60/40 Balanced Allocation ETF (AOR)",
+        "AOM": "iShares Core 40/60 Moderate Allocation ETF (AOM)",
+        "AOK": "iShares Core 30/70 Conservative Allocation ETF (AOK)",
+        "Benchmark (SPY)": "BlackRock 60/40 Target Allocation (BVDAX)",
+        "60/40 Benchmark": "BlackRock 60/40 Target Allocation Fund (BIGPX)"
+    }
+    result = {"weights": weights,
+              "cum_curve": {},
+              "correlation": returns.corr().to_dict(),
+              "metrics": None}
     if rolling:
-        port_cum, bench_cum = rolling_backtest(
+        port_cum, bench_cum, all_weights = rolling_backtest(
             tickers=etf_list,
             start_date=start_date,
             end_date=end_date,
@@ -229,68 +229,113 @@ async def get_portfolio(etf_list: str, rolling: bool = False, start_date: str = 
             allow_short=False,
             max_volatility=0.2
         )
-        port_cum.index = port_cum.index.strftime("%Y-%m-%d")
-        bench_cum.index = bench_cum.index.strftime("%Y-%m-%d")
-
-        result = {
-            "cum_curve": port_cum.to_dict(),
-            "bench_cum": bench_cum.to_dict(),
-            "weights": {},
-            "correlation": None,
-            "metrics": None
+        rolling_daily_ret = port_cum.pct_change().dropna()
+        rolling_metrics = {
+            "Total Return": port_cum.iloc[-1] - 1,
+            "Annualised Return": (port_cum.iloc[-1]) ** (252 / len(port_cum)) - 1,
+            "Annualised Vol": rolling_daily_ret.std() * np.sqrt(252),
+            "Sharpe": (rolling_daily_ret.mean() / rolling_daily_ret.std()) * np.sqrt(252),
+            "Max Drawdown": ((port_cum / port_cum.cummax()) - 1).min()
         }
-    else:
-        weights, ann_ret, ann_vol, sharpe, returns = optimize_custom_portfolio(
-            asset_list=etf_list,
-            start_date=start_date,
-            end_date=end_date,
-            min_weight=0.05,
-            max_weight=0.5,
-            min_assets=3,
-            allow_short=False,
-            rf_series=rf_series,
-            max_volatility=0.2
-        )
 
-        w_series = _weight_series(weights, returns.columns)
-        port_ret = returns.dot(w_series)
-        cum_curve = compute_cumulative_returns(port_ret)
-        metrics = evaluate_portfolio(weights, returns, rf_series)
+        bench_6040_prices = download_data(["SPY", "TLT"], start_date, end_date)
+        bench_6040_rets = compute_daily_returns(bench_6040_prices)
+        bench_6040 = bench_6040_rets["SPY"] * 0.6 + bench_6040_rets["TLT"] * 0.4
+        bench_6040_cum = (1 + bench_6040).cumprod().rename("60/40 Benchmark")
 
-        cum_curve.index = cum_curve.index.strftime("%Y-%m-%d")
-        bench_prices = download_data(["SPY", "TLT"], start_date, end_date)
-        bench_returns = compute_daily_returns(bench_prices)
-        bench_6040 = bench_returns["SPY"] * 0.6 + bench_returns["TLT"] * 0.4
-        bench_6040_cum = (1 + bench_6040).cumprod()
-
-        ticker_name_map = {
-            "AOA": "iShares Core 80/20 Aggressive Allocation ETF (AOA)",
-            "AOR": "iShares Core 60/40 Balanced Allocation ETF (AOR)",
-            "AOM": "iShares Core 40/60 Moderate Allocation ETF (AOM)",
-            "AOK": "iShares Core 30/70 Conservative Allocation ETF (AOK)",
-        }
         compare_tickers = ["AOA", "AOR", "AOM", "AOK"]
         compare_prices = download_data(compare_tickers, start_date, end_date)
         compare_returns = compute_daily_returns(compare_prices)
         compare_cum = (1 + compare_returns).cumprod()
 
-        bench_prices_full = download_data(["SPY"], start_date, end_date)
-        bench_rets_full = compute_daily_returns(bench_prices_full)
-        bench_cum = (1 + bench_rets_full["SPY"]).cumprod()
-
-        compare_cum_renamed = compare_cum.rename(columns=ticker_name_map)
-        bench_cum_named = bench_cum.rename("Benchmark (SPY)")
-        bench_6040_cum_named = bench_6040_cum.rename("60/40 Benchmark")
-        cum_curve_named = cum_curve.rename("Buy & Hold Portfolio")
-        for df in [cum_curve_named, bench_cum_named, bench_6040_cum_named, compare_cum_renamed]:
-            df.index = pd.to_datetime(df.index).strftime("%Y-%m-%d")
-        result = {"weights": weights,
-                  "cum_curve": {},
-                  "correlation": returns.corr().to_dict(),
-                  "metrics": metrics}
-        result['cum_curve']["Buy & Hold Portfolio"] = cum_curve_named.to_dict()
-        result['cum_curve']["Benchmark (SPY)"] = bench_cum_named.to_dict()
-        result['cum_curve']["60/40 Benchmark"] = bench_6040_cum_named.to_dict()
-        for i in compare_cum_renamed.columns:
-            result['cum_curve'][i] = compare_cum_renamed[i].to_dict()
+        port_cum_named = port_cum.rename("Rolling Portfolio")
+        bench_cum_named = bench_cum.rename(ticker_name_map["Benchmark (SPY)"])
+        bench_6040_cum = bench_6040_cum.rename(ticker_name_map["60/40 Benchmark"])
+        compare_cum = compare_cum.rename(columns={k: v for k, v in ticker_name_map.items() if k in compare_cum.columns})
+        all_curves = pd.concat([port_cum_named, bench_cum_named, bench_6040_cum, compare_cum], axis=1)
+        all_curves = all_curves.dropna(how='any')
+        result['metrics'] = rolling_metrics
+    else:
+        rebalance_curve = static_backtest_with_rebalancing(prices, weights, rebalance_freq='BME')
+        bench_prices = download_data(["SPY"], start_date, end_date)
+        bench_rets = compute_daily_returns(bench_prices)
+        bench_cum = (1 + bench_rets["SPY"]).cumprod().rename(ticker_name_map["Benchmark (SPY)"])
+        bench_6040_prices = download_data(["SPY", "TLT"], start_date, end_date)
+        bench_6040_rets = compute_daily_returns(bench_6040_prices)
+        bench_6040 = bench_6040_rets["SPY"] * 0.6 + bench_6040_rets["TLT"] * 0.4
+        bench_6040_cum = (1 + bench_6040).cumprod().rename(ticker_name_map["60/40 Benchmark"])
+        compare_tickers = ["AOA", "AOR", "AOM", "AOK"]
+        compare_prices = download_data(compare_tickers, start_date, end_date)
+        compare_returns = compute_daily_returns(compare_prices)
+        compare_cum = (1 + compare_returns).cumprod()
+        compare_cum = compare_cum.rename(columns={k: v for k, v in ticker_name_map.items() if k in compare_cum.columns})
+        rebalance_curve_named = rebalance_curve.rename("Static Rebalance Portfolio")
+        all_curves = pd.concat([rebalance_curve_named, bench_cum, bench_6040_cum, compare_cum], axis=1)
+        all_curves = all_curves.dropna(how='any')
+        metrics = evaluate_portfolio(weights, returns, rf_series)
+        result['metrics'] = metrics
+    for i in all_curves.columns:
+        all_curves[i].index = all_curves[i].index.strftime("%Y-%m-%d")
+        result['cum_curve'][i] = all_curves[i].to_dict()
+    output = suggest(model='Meta-Llama-3.3-70B-Instruct', port_data=result)
+    result['explanation'] = output
     return resp_200(data=result)
+
+
+def build_explanation_messages(port_data: dict, risk_profile: str = "Balanced") -> list:
+    system_prompt = (
+        "You are a senior portfolio strategist at a digital wealth advisory platform. "
+        "Your job is to explain investment portfolios to clients in a professional, clear, and client-friendly way. "
+        "You should highlight the advantages, risks, and investment strategies of the selected ETFs, "
+        "and help clients understand the design philosophy and adjustment logic of the portfolio. "
+        "Do not invent data; rely only on the inputs provided."
+    )
+
+    weights_text = "\n".join([f"- {k}: {v * 100:.1f}%" for k, v in port_data['weights'].items()])
+    metrics = port_data['metrics']
+    context_prompt = (
+        f"Client risk profile: {risk_profile}\n"
+        f"Portfolio allocation:\n{weights_text}\n\n"
+        "Historical metrics:\n"
+        f"- Annualised return: {metrics['Annualised Return'] * 100:.2f}%\n"
+        f"- Annualised volatility: {metrics['Annualised Vol'] * 100:.2f}%\n"
+        f"- Sharpe ratio: {metrics['Sharpe']:.2f}\n"
+        f"- Max drawdown: {metrics['Max Drawdown'] * 100:.2f}%\n"
+        f"Current date: {datetime.now().date().isoformat()}"
+    )
+
+    task_prompt = (
+        "Write a detailed explanation (about 200 words) covering the following points:\n"
+        "1) **ETF Advantages** – What are the main benefits of the selected ETFs (such as diversification, liquidity, cost, transparency, etc.)?\n"
+        "2) **Asset Allocation** – Clearly list the specific allocation percentages for each asset class (e.g., technology stocks, bonds, etc.), so the strategy is actionable.\n"
+        "3) **Diversification Details** – Explain what types of ETFs (such as sector, thematic, regional, etc.) are included and how this enhances diversification.\n"
+        "4) **Risks & Risk Management** – What are the main risks, and what risk management measures are in place (e.g., rebalancing, stop-loss, dynamic adjustment strategies, etc.)?\n"
+        "5) **Investment Strategy & Objectives** – What is the main investment goal (e.g., long-term growth, stability, or income)? What is the strategy behind the portfolio (e.g., long-term holding, regular rebalancing, risk control, etc.)?\n"
+        "6) **Portfolio Design Philosophy & Adjustment Logic** – Why were these assets and weights chosen? How does the design align with the client's risk profile and investment goals? If the portfolio is regularly rebalanced, explain the basis and benefit of such adjustments.\n"
+        "Use clear sections with bold headers, and make the explanation easy for a non-professional client to understand.\n"
+        "Finally, provide a friendly suggestion that the client can further personalize the portfolio according to their own risk tolerance, investment horizon, or specific preferences (such as focusing more on certain sectors, regions, or adding/removing certain asset types). Encourage the client to communicate their needs for a more tailored solution."
+    )
+
+    return [
+        {"role": "system", "content": system_prompt},
+        {"role": "user", "content": context_prompt + "\n\n" + task_prompt}
+    ]
+
+
+def suggest(model, port_data):
+    client = openai.OpenAI(
+        api_key=api_keys[random.randint(0, len(api_keys) - 1)],
+        base_url="https://api.sambanova.ai/v1",
+    )
+    messages = build_explanation_messages(port_data)
+    response = client.chat.completions.create(
+        model=model,
+        messages=messages,
+        temperature=0.1,
+        top_p=0.1,
+        max_tokens=4096
+    )
+    output = response.choices[0].message.content
+
+    return output
+

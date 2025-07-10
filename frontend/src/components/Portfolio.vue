@@ -25,16 +25,15 @@
                     <span style="color: #999; float: right;">{{ item.label }}</span>
                 </el-option>
             </el-select>
-            <!--            <el-switch-->
-            <!--                v-model="rolling"-->
-            <!--                active-text="Rolling Backtest"-->
-            <!--                inactive-text="Buy & Hold"-->
-            <!--                style="margin-left: 10px;"-->
-            <!--            ></el-switch>-->
+            <el-switch
+                v-model="rolling"
+                active-text="Rolling"
+                style="margin-left: 10px;"
+            ></el-switch>
 
             <el-button
                 type="primary"
-                style="margin-left: 5px"
+                style="margin-left: 10px"
                 @click="loadGet"
                 icon="el-icon-search"
             >
@@ -50,7 +49,7 @@
                     <div class="chart-half" ref="heatmapChart"></div>
                 </div>
                 <div class="chart-large" ref="lineChart"></div>
-                <div class="description">
+                <div class="description" v-html="descriptionText">
                     <h3>Portfolio Summary</h3>
                     <p>{{ descriptionText }}</p>
                 </div>
@@ -66,6 +65,7 @@
 
 <script>
 import * as echarts from "echarts";
+import {marked} from "marked";
 
 export default {
     name: "Portfolio",
@@ -235,21 +235,12 @@ export default {
                 yAxis: {type: "value"},
                 series,
             });
-            if (data.metrics) {
-                var TotalReturn = data.metrics['Total Return']
-                var Sharpe = data.metrics['Sharpe']
-                var MaxDrawdown = data.metrics['Max Drawdown']
-                var AnnualisedReturn = data.metrics['Annualised Return']
-                var AnnualisedVol = data.metrics['Annualised Vol']
-                this.descriptionText = `
-                    Annual Return: ${(AnnualisedReturn * 100).toFixed(2)}%
-                    Annual Volatility: ${(AnnualisedVol * 100).toFixed(2)}%
-                    Sharpe Ratio: ${Sharpe.toFixed(2)}
-                    Max Drawdown: ${(MaxDrawdown * 100).toFixed(2)}%
-                    Total Return: ${(TotalReturn * 100).toFixed(2)}%`;
+            if (data.explanation) {
+                this.descriptionText = marked.parse(data.explanation);
             } else {
-                this.descriptionText = "No portfolio statistics available for rolling backtest.";
+                this.descriptionText = marked.parse("No portfolio statistics available for rolling backtest.");
             }
+
         },
     },
     mounted() {
@@ -307,5 +298,35 @@ export default {
     border-radius: 10px;
     background: #f9f9f9;
 }
+
+.description {
+    padding: 30px;
+    border: 1px solid #ddd;
+    border-radius: 12px;
+    background: #ffffff;
+    line-height: 1.8;
+    font-size: 15px;
+    color: #333;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+}
+
+.description h2, .description h3 {
+    margin-top: 20px;
+    color: #2c3e50;
+}
+
+.description ul {
+    padding-left: 20px;
+    list-style-type: disc;
+}
+
+.description strong {
+    color: #1e87f0;
+}
+
+.description p {
+    margin: 10px 0;
+}
+
 
 </style>
