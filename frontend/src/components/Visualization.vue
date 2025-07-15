@@ -88,8 +88,8 @@ export default {
                     value: 'LSTM',
                     label: 'LSTM'
                 }, {
-                    value: 'RNN',
-                    label: 'RNN'
+                    value: 'Artificial Neural Network',
+                    label: 'Artificial Neural Network'
                 }
             ],
             code: '',
