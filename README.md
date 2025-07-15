@@ -1,7 +1,7 @@
-
 # Project Setup Guide
 
-This project consists of a frontend (Vue) and backend (FastAPI). Please ensure you have the following installed on your system:
+This project consists of a frontend (Vue) and backend (FastAPI). Please ensure you have the following installed on your
+system:
 
 - [Node.js](https://nodejs.org/) (Recommended: v16 or later)
 - [Python](https://www.python.org/) (Recommended with Conda for environment management)
@@ -37,7 +37,7 @@ cd app
 uvicorn app.main:app --host=0.0.0.0 --port 8000
 ```
 
-The backend service will start at `http://127.0.0.1:8000`. 
+The backend service will start at `http://127.0.0.1:8000`.
 The API documentation can be accessed at `http://127.0.0.1:8000/docs`.
 
 ---
@@ -63,6 +63,7 @@ export NODE_OPTIONS=--openssl-legacy-provider  # macOS / Linux
 ```
 
 > For Windows users:
+
 ```bash
 set NODE_OPTIONS=--openssl-legacy-provider
 ```
@@ -84,4 +85,19 @@ The frontend service will run at `http://localhost:8080`.
 
 ---
 
+## 🖼️ Project Screenshots
+
+### 📈 Prediction Chart
+
+![Prediction Chart](docs/Predict.png)
+
+### 📊 LLM Conversation
+
+![LLM Conversation](docs/LLM.png)
+
+### 📈 Portfolio
+
+![Portfolio Chart](docs/Portfolio1.png)
+
+![Portfolio Chart](docs/Portfolio2.png)
 
