@@ -8,6 +8,7 @@ from app.db.db_session import get_db
 from app.models.etf import ETF
 from app.nn.gru import gru_three
 from app.nn.ann import artificial_neural_network_model
+from datetime import datetime, timedelta
 
 router = APIRouter()
 
@@ -19,6 +20,12 @@ def get_all_etf(db: Session = Depends(get_db)):
     for i in range(len(data)):
         etfs.append({'value': data[i].value, 'label': f"{data[i].value} - {data[i].label}"})
     return resp_200(data=etfs)
+
+
+def shift_start_date(start_date_str: str, window_size: int = 30) -> str:
+    start_date = pd.to_datetime(start_date_str)
+    shifted_date = start_date - timedelta(days=window_size * 2)
+    return shifted_date.strftime('%Y-%m-%d')
 
 
 def get_data(code: str, start_date: str, end_date: str):
@@ -44,7 +51,11 @@ def get_data(code: str, start_date: str, end_date: str):
 @router.get("/getPrice", summary='Get history and predicted price of a financial instrument')
 async def get_finance_price(model: str, code: str, start_date: str, end_date: str):
     try:
-        df = get_data(code, start_date, end_date)
+        if model == 'LSTM':
+            adjusted_start = shift_start_date(start_date, window_size=90)
+        else:
+            adjusted_start = shift_start_date(start_date, window_size=30)
+        df = get_data(code, adjusted_start, end_date)
         if model == 'LSTM':
             actual_data, pred_data, model_loss, mean_norm_rmse, mean_rmse, mean_mape = lstm_two(df.copy())
         elif model == 'GRU':
@@ -54,6 +65,11 @@ async def get_finance_price(model: str, code: str, start_date: str, end_date: st
             actual_data, pred_data, model_loss, mean_rmse, mean_mape = artificial_neural_network_model(df.copy())
         actual_data = actual_data.reset_index()
         pred_data = pred_data.reset_index()
+        actual_data['date'] = pd.to_datetime(actual_data['date'])
+        pred_data['date'] = pd.to_datetime(pred_data['date'])
+        start_date_dt = pd.to_datetime(start_date)
+        actual_data = actual_data[actual_data['date'] >= start_date_dt]
+        pred_data = pred_data[pred_data['date'] >= start_date_dt]
         actual_data['date'] = pd.to_datetime(actual_data['date']).dt.strftime('%Y-%m-%d')
         pred_data['date'] = pd.to_datetime(pred_data['date']).dt.strftime('%Y-%m-%d')
         train_records = actual_data.to_dict(orient="records")

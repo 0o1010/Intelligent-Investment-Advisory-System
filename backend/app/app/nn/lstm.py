@@ -9,9 +9,15 @@ from sklearn.metrics import mean_squared_error
 import numpy as np
 import pandas as pd
 import tensorflow as tf
+import random
 
 
-def lstm_two(stk_data, window_size=30, train_rate=0.85, future_days=10, search_data_len=500):
+def lstm_two(stk_data, window_size=30, train_rate=0.85, future_days=10, search_data_len=50):
+    seed = 3
+    random.seed(seed)
+    np.random.seed(seed)
+    tf.random.set_seed(seed)
+    kt.engine.hyperparameters.HyperParameters._random_state = np.random.RandomState(seed)
     df = stk_data.copy()
     df['date'] = pd.to_datetime(df['date'])
     df.set_index('date', inplace=True)
@@ -124,3 +130,24 @@ def lstm_two(stk_data, window_size=30, train_rate=0.85, future_days=10, search_d
     pred_data = pd.concat([train_df, valid_df, future_df])
     pred_data = pred_data[['Prediction']]
     return actual_data, pred_data, history.history['loss'], mean_norm_rmse, mean_rmse, mean_mape
+
+
+def get_data(code: str, start_date: str, end_date: str):
+    import yfinance as yf
+    etf = yf.Ticker(code)
+    hist = etf.history(start=start_date, end=end_date, auto_adjust=False)
+    df = hist.reset_index()
+
+    if not pd.api.types.is_datetime64_any_dtype(df["Date"]):
+        df["Date"] = pd.to_datetime(df["Date"])
+
+    df = (df.assign(Date=lambda x: x['Date'].dt.tz_localize(None).dt.strftime('%Y-%m-%d'))
+    .rename(columns={
+        "Date": "date",
+        "Open": "open",
+        "High": "high",
+        "Low": "low",
+        "Close": "close",
+        "Volume": "volume"
+    }))
+    return df

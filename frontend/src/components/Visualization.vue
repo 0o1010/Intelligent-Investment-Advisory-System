@@ -101,20 +101,11 @@ export default {
                 },
                 shortcuts: [
                     {
-                        text: 'Half year',
+                        text: 'Two years',
                         onClick(picker) {
                             const end = new Date();
                             const start = new Date();
-                            start.setTime(start.getTime() - 3600 * 1000 * 24 * 180);
-                            picker.$emit('pick', [start, end]);
-                        }
-                    },
-                    {
-                        text: 'One year',
-                        onClick(picker) {
-                            const end = new Date();
-                            const start = new Date();
-                            start.setTime(start.getTime() - 3600 * 1000 * 24 * 365);
+                            start.setTime(start.getTime() - 3600 * 1000 * 24 * 365 * 2);
                             picker.$emit('pick', [start, end]);
                         }
                     },
@@ -124,6 +115,15 @@ export default {
                             const end = new Date();
                             const start = new Date();
                             start.setTime(start.getTime() - 3600 * 1000 * 24 * 365 * 3);
+                            picker.$emit('pick', [start, end]);
+                        }
+                    },
+                    {
+                        text: 'Five years',
+                        onClick(picker) {
+                            const end = new Date();
+                            const start = new Date();
+                            start.setTime(start.getTime() - 3600 * 1000 * 24 * 365 * 5);
                             picker.$emit('pick', [start, end]);
                         }
                     }
