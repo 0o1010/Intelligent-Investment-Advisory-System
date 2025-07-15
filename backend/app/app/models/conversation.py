@@ -10,4 +10,3 @@ class Conversation(Base):
     user_input = Column(String)
     output = Column(String)
     model = Column(String)
-    # ask_date = Column()

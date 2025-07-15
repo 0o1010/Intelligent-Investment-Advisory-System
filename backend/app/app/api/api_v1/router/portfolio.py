@@ -217,6 +217,16 @@ async def get_portfolio(etf_list: str, rolling: bool,
               "cum_curve": {},
               "correlation": returns.corr().to_dict(),
               "metrics": None}
+    bench_6040_prices = download_data(["SPY", "TLT"], start_date, end_date)
+    bench_6040_rets = compute_daily_returns(bench_6040_prices)
+    bench_6040 = bench_6040_rets["SPY"] * 0.6 + bench_6040_rets["TLT"] * 0.4
+    bench_6040_cum = (1 + bench_6040).cumprod().rename(ticker_name_map["60/40 Benchmark"])
+    compare_tickers = ["AOA", "AOR", "AOM", "AOK"]
+    compare_prices = download_data(compare_tickers, start_date, end_date)
+    compare_returns = compute_daily_returns(compare_prices)
+    compare_cum = (1 + compare_returns).cumprod()
+    compare_cum = compare_cum.rename(columns={k: v for k, v in ticker_name_map.items() if k in compare_cum.columns})
+
     if rolling:
         port_cum, bench_cum, all_weights = rolling_backtest(
             tickers=etf_list,
@@ -238,20 +248,9 @@ async def get_portfolio(etf_list: str, rolling: bool,
             "Max Drawdown": ((port_cum / port_cum.cummax()) - 1).min()
         }
 
-        bench_6040_prices = download_data(["SPY", "TLT"], start_date, end_date)
-        bench_6040_rets = compute_daily_returns(bench_6040_prices)
-        bench_6040 = bench_6040_rets["SPY"] * 0.6 + bench_6040_rets["TLT"] * 0.4
-        bench_6040_cum = (1 + bench_6040).cumprod().rename("60/40 Benchmark")
-
-        compare_tickers = ["AOA", "AOR", "AOM", "AOK"]
-        compare_prices = download_data(compare_tickers, start_date, end_date)
-        compare_returns = compute_daily_returns(compare_prices)
-        compare_cum = (1 + compare_returns).cumprod()
-
         port_cum_named = port_cum.rename("Rolling Portfolio")
         bench_cum_named = bench_cum.rename(ticker_name_map["Benchmark (SPY)"])
-        bench_6040_cum = bench_6040_cum.rename(ticker_name_map["60/40 Benchmark"])
-        compare_cum = compare_cum.rename(columns={k: v for k, v in ticker_name_map.items() if k in compare_cum.columns})
+
         all_curves = pd.concat([port_cum_named, bench_cum_named, bench_6040_cum, compare_cum], axis=1)
         all_curves = all_curves.dropna(how='any')
         result['metrics'] = rolling_metrics
@@ -260,15 +259,7 @@ async def get_portfolio(etf_list: str, rolling: bool,
         bench_prices = download_data(["SPY"], start_date, end_date)
         bench_rets = compute_daily_returns(bench_prices)
         bench_cum = (1 + bench_rets["SPY"]).cumprod().rename(ticker_name_map["Benchmark (SPY)"])
-        bench_6040_prices = download_data(["SPY", "TLT"], start_date, end_date)
-        bench_6040_rets = compute_daily_returns(bench_6040_prices)
-        bench_6040 = bench_6040_rets["SPY"] * 0.6 + bench_6040_rets["TLT"] * 0.4
-        bench_6040_cum = (1 + bench_6040).cumprod().rename(ticker_name_map["60/40 Benchmark"])
-        compare_tickers = ["AOA", "AOR", "AOM", "AOK"]
-        compare_prices = download_data(compare_tickers, start_date, end_date)
-        compare_returns = compute_daily_returns(compare_prices)
-        compare_cum = (1 + compare_returns).cumprod()
-        compare_cum = compare_cum.rename(columns={k: v for k, v in ticker_name_map.items() if k in compare_cum.columns})
+
         rebalance_curve_named = rebalance_curve.rename("Static Rebalance Portfolio")
         all_curves = pd.concat([rebalance_curve_named, bench_cum, bench_6040_cum, compare_cum], axis=1)
         all_curves = all_curves.dropna(how='any')
@@ -305,13 +296,9 @@ def build_explanation_messages(port_data: dict, risk_profile: str = "Balanced") 
     )
 
     task_prompt = (
-        "Write a detailed explanation (about 200 words) covering the following points:\n"
-        "1) **ETF Advantages** – What are the main benefits of the selected ETFs (such as diversification, liquidity, cost, transparency, etc.)?\n"
-        "2) **Asset Allocation** – Clearly list the specific allocation percentages for each asset class (e.g., technology stocks, bonds, etc.), so the strategy is actionable.\n"
-        "3) **Diversification Details** – Explain what types of ETFs (such as sector, thematic, regional, etc.) are included and how this enhances diversification.\n"
-        "4) **Risks & Risk Management** – What are the main risks, and what risk management measures are in place (e.g., rebalancing, stop-loss, dynamic adjustment strategies, etc.)?\n"
-        "5) **Investment Strategy & Objectives** – What is the main investment goal (e.g., long-term growth, stability, or income)? What is the strategy behind the portfolio (e.g., long-term holding, regular rebalancing, risk control, etc.)?\n"
-        "6) **Portfolio Design Philosophy & Adjustment Logic** – Why were these assets and weights chosen? How does the design align with the client's risk profile and investment goals? If the portfolio is regularly rebalanced, explain the basis and benefit of such adjustments.\n"
+        "Please write a concise and client-friendly explanation (around 150 words) of the following:\n\n"
+        "**1. Portfolio Performance** – Summarize key performance indicators such as annualized return, annualized volatility, Sharpe ratio, and maximum drawdown.\n\n"
+        "**2. Diversification Details** – Briefly explain what types of ETFs (e.g., sector-based, thematic, regional, etc.) are included, and how they contribute to overall diversification.\n\n"
         "Use clear sections with bold headers, and make the explanation easy for a non-professional client to understand.\n"
         "Finally, provide a friendly suggestion that the client can further personalize the portfolio according to their own risk tolerance, investment horizon, or specific preferences (such as focusing more on certain sectors, regions, or adding/removing certain asset types). Encourage the client to communicate their needs for a more tailored solution."
     )
