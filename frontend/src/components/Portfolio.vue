@@ -49,6 +49,28 @@
                     <div class="chart-half" ref="heatmapChart"></div>
                 </div>
                 <div class="chart-large" ref="lineChart"></div>
+                <h3 v-if="testPeriod" style="font-weight: bold; color: #2c3e50;">
+                    {{ testPeriod }}
+                </h3>
+                <el-table
+                    v-if="metricsTable"
+                    :data="metricsTable"
+                    style="width: 100%"
+                    border
+                    :header-cell-style="{ background: '#f5f7fa', color: '#333', fontWeight: 'bold' }"
+                >
+                    <el-table-column prop="label" label="Portfolio / Benchmark" min-width="220">
+                        <template v-slot="scope">
+                            <strong>{{ scope.row.label }}</strong>
+                        </template>
+                    </el-table-column>
+                    <el-table-column prop="Total Return" label="Total Return" width="130"/>
+                    <el-table-column prop="Annualised Return" label="Annualised Return" width="160"/>
+                    <el-table-column prop="Annualised Volatility" label="Annualised Volatility" width="180"/>
+                    <el-table-column prop="Max Drawdown" label="Max Drawdown" width="150"/>
+                    <el-table-column prop="Sharpe Ratio" label="Sharpe Ratio" width="140"/>
+                </el-table>
+
                 <div class="description" v-html="descriptionText">
                     <h3>Portfolio Summary</h3>
                     <p>{{ descriptionText }}</p>
@@ -71,9 +93,11 @@ export default {
     name: "Portfolio",
     data() {
         return {
+            metricsTable: null,
             code: [],
             loadingCodes: false,
             codes: [],
+            testPeriod: "",
             showCharts: false,
             rolling: false,
             loadingChart: false,
@@ -237,8 +261,21 @@ export default {
             });
             if (data.explanation) {
                 this.descriptionText = marked.parse(data.explanation);
+
             } else {
                 this.descriptionText = marked.parse("No portfolio statistics available for rolling backtest.");
+            }
+            if (data.metrics_table) {
+                console.log(data.metrics_table)
+                this.metricsTable = Object.entries(data.metrics_table).map(([label, metrics]) => ({
+                    label,
+                    ...Object.fromEntries(
+                        Object.entries(metrics).map(([k, v]) => [k, v != null ? v.toFixed(4) : '-'])
+                    )
+                }));
+            }
+            if (data.test_period) {
+                this.testPeriod = data.test_period;
             }
 
         },

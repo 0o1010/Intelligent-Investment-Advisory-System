@@ -101,3 +101,4 @@ The frontend service will run at `http://localhost:8080`.
 
 ![Portfolio Chart](docs/Portfolio2.png)
 
+![Portfolio Chart](docs/Portfolio3.png)

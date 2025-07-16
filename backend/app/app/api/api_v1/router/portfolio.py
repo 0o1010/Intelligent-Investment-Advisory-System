@@ -270,6 +270,45 @@ async def get_portfolio(etf_list: str, rolling: bool,
         result['cum_curve'][i] = all_curves[i].to_dict()
     output = suggest(model='Meta-Llama-3.3-70B-Instruct', port_data=result)
     result['explanation'] = output
+    if rolling:
+        all_curves = all_curves.rename(columns={"Rolling Portfolio": "Portfolio"})
+    else:
+        all_curves = all_curves.rename(columns={"Static Rebalance Portfolio": "Portfolio"})
+
+    row_labels = [
+        "Portfolio",
+        "BlackRock 60/40 Target Allocation (BVDAX)",
+        "BlackRock 60/40 Target Allocation Fund (BIGPX)",
+        "iShares Core 80/20 Aggressive Allocation ETF (AOA)",
+        "iShares Core 60/40 Balanced Allocation ETF (AOR)",
+        "iShares Core 40/60 Moderate Allocation ETF (AOM)",
+        "iShares Core 30/70 Conservative Allocation ETF (AOK)"
+    ]
+    col_labels = ["Total Return", "Annualised Return",
+                  "Annualised Volatility", "Max Drawdown", "Sharpe Ratio"]
+
+    metrics_df = pd.DataFrame(index=row_labels, columns=col_labels, dtype=float)
+    for lbl in row_labels:
+        if lbl == "Portfolio":
+            metrics_df.loc[lbl] = [result['metrics']['Total Return'], result['metrics']['Annualised Return'],
+                                   result['metrics']['Annualised Vol'], result['metrics']['Max Drawdown'],
+                                   result['metrics']['Sharpe']]
+        else:
+            series = all_curves[lbl]
+            total_ret = series.iloc[-1] / series.iloc[0] - 1
+            yrs = (series.index[-1] - series.index[0]).days / 365.0
+            ann_ret = (1 + total_ret) ** (1 / yrs) - 1 if yrs > 0 else np.nan
+            daily_ret = series.pct_change().dropna()
+            ann_vol = daily_ret.std() * np.sqrt(252)
+            sharpe = (daily_ret.mean() / daily_ret.std()) * np.sqrt(252) if daily_ret.std() > 0 else 0.0
+            mdd = ((series / series.cummax()) - 1).min()
+            metrics_df.loc[lbl] = [total_ret, ann_ret, ann_vol, mdd, sharpe]
+
+    result["metrics_table"] = metrics_df.to_dict(orient="index")
+
+    start_str = all_curves.index[0].strftime("%Y-%m-%d")
+    end_str = all_curves.index[-1].strftime("%Y-%m-%d")
+    result["test_period"] = f"Test Period: {start_str} to {end_str}"
     return resp_200(data=result)
 
 
@@ -325,4 +364,3 @@ def suggest(model, port_data):
     output = response.choices[0].message.content
 
     return output
-
