@@ -9,6 +9,17 @@ system:
 
 ---
 
+## 📥 Clone the Project
+
+Before starting, clone the repository from GitHub:
+
+```bash
+git clone https://github.com/0o1010/Intelligent-Investment-Advisory-System.git
+cd Intelligent-Investment-Advisory-System
+```
+
+---
+
 ## 🔧 Backend Setup
 
 1. **Navigate to the backend project directory**:
