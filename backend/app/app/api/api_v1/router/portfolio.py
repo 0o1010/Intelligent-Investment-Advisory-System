@@ -134,7 +134,7 @@ def evaluate_portfolio(weights, returns, rf_series):
 def static_backtest_with_rebalancing(
         prices: pd.DataFrame,
         weights: Dict[str, float],
-        rebalance_freq: str = "BME"
+        rebalance_freq: str = "BM"
 ) -> pd.Series:
     returns = compute_daily_returns(prices)
     rebal_dates = pd.date_range(start=returns.index[0], end=returns.index[-1], freq=rebalance_freq).unique()
@@ -154,7 +154,7 @@ def rolling_backtest(
         tickers: List[str],
         start_date: str,
         end_date: str,
-        rebalance_freq: str = "BME",
+        rebalance_freq: str = "BM",
         lookback_days: int = 120,
         benchmark: str = "SPY",
         rf_series: Optional[pd.Series] = None,
@@ -255,7 +255,7 @@ async def get_portfolio(etf_list: str, rolling: bool,
         all_curves = all_curves.dropna(how='any')
         result['metrics'] = rolling_metrics
     else:
-        rebalance_curve = static_backtest_with_rebalancing(prices, weights, rebalance_freq='BME')
+        rebalance_curve = static_backtest_with_rebalancing(prices, weights, rebalance_freq='BM')
         bench_prices = download_data(["SPY"], start_date, end_date)
         bench_rets = compute_daily_returns(bench_prices)
         bench_cum = (1 + bench_rets["SPY"]).cumprod().rename(ticker_name_map["Benchmark (SPY)"])
